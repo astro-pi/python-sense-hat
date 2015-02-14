@@ -1,9 +1,10 @@
 #!/usr/bin/python
-import astro_pi
+import sys
+from astro_pi import AstroPi
 
 edge_loop = [0, 1, 2, 3, 4, 5, 6, 7, 15, 23, 31, 39, 47, 55, 63, 62, 61, 60, 59, 58, 57, 56, 48, 40, 32, 24, 16, 8]
 
-ap = astro_pi.create()
+ap = AstroPi()
 ap.set_rotation(0)
 ap.clear()
 

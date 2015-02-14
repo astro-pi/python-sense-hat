@@ -1,5 +1,6 @@
 #!/usr/bin/python
-import astro_pi, time
+import sys, time
+from astro_pi import AstroPi
 
 X = [255,0,0]
 O = [255,255,255]
@@ -15,7 +16,7 @@ O, O, O, O, O, O, O, O,
 O, O, O, X, O, O, O, O
 ]
 
-ap = astro_pi.create()
+ap = AstroPi()
 
 ap.set_pixels(question_mark)
 
