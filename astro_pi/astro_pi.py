@@ -2,13 +2,8 @@
 import struct, os, sys, math, time, numpy as np, RTIMU
 from PIL import Image # PIL and RTIMU are currently only Python 2 
 
-sys.path.append('.')
-
-def create():
-    return Astro_Pi()
-
-class Astro_Pi(object):
-    def __init__(self, fb_device = '/dev/fb1', imu_settings_file = 'RTIMULib'):
+class AstroPi(object):
+    def __init__(self, fb_device = '/dev/fb1', imu_settings_file = 'RTIMULib', text_assets = 'astro_pi_text'):
         self.fb_device = fb_device
 
         # 0 is With B+ HDMI port facing downwards
@@ -35,6 +30,20 @@ class Astro_Pi(object):
         }
 
         self._rotation = 0
+
+        # Load text assets
+        dir_path = os.path.dirname(__file__)
+        text_image_file = os.path.join(dir_path, '%s.png' % text_assets)
+        text_file = os.path.join(dir_path, '%s.txt' % text_assets)
+
+        text_pixels = self.load_image(text_image_file, False)
+        with open(text_file, 'r') as f:
+            loaded_text = f.read()
+        self._text_dict = {}
+        for index, s in enumerate(loaded_text):
+            start = index * 40
+            end = start + 40
+            self._text_dict[s] = text_pixels[start:end]
 
         # Load IMU settings and calibration data
         self.imu_settings = RTIMU.Settings(imu_settings_file)
@@ -163,15 +172,65 @@ class Astro_Pi(object):
 
         return pix
 
-    def load_image(self, file_name):
+    def load_image(self, file_name, redraw = True):
         if not os.path.exists(file_name):
             raise IOError('%s not found' % file_name)
 
         img = Image.open(file_name).convert('RGB')
-        self.set_pixels(list(img.getdata()))
+        pixel_list = map(list,img.getdata())
+
+        if redraw:
+            self.set_pixels(pixel_list)
+
+        return pixel_list
 
     def clear(self, colour = [0,0,0]):
         self.set_pixels([colour] * 64)
+
+    def get_char_pixels(self, s):
+        if len(s) == 1 and s in self._text_dict.keys():
+            return self._text_dict[s]
+        else:
+            return self._text_dict['?']
+
+    def show_message(self, text_string, scroll_speed = .07, text_colour = [255, 255, 255], back_colour = [0, 0, 0]):
+        previous_rotation = self._rotation
+        self._rotation -= 90
+        if self._rotation < 0:
+            self._rotation = 270
+        string_padding = [back_colour] * 64
+        letter_padding = [back_colour] * 8
+        # Build pixels from dictionary
+        scroll_pixels = []
+        scroll_pixels.extend(string_padding)
+        for s in text_string:
+            scroll_pixels.extend(self.get_char_pixels(s))
+            scroll_pixels.extend(letter_padding)
+        scroll_pixels.extend(string_padding)
+        # Recolour pixels as necessary
+        coloured_pixels = [text_colour if pixel == [255,255,255] else back_colour for pixel in scroll_pixels]
+        # Shift right by 8 pixels per frame to scroll
+        scroll_length = len(coloured_pixels) // 8
+        for i in range(scroll_length - 8):
+            start = i * 8
+            end = start + 64
+            self.set_pixels(coloured_pixels[start:end])
+            time.sleep(scroll_speed)
+        self._rotation = previous_rotation
+
+    def show_letter(self, s, text_colour = [255, 255, 255], back_colour = [0, 0, 0]):
+        if len(s) > 1:
+            raise ValueError('Only one character may be passed into this method')
+        previous_rotation = self._rotation
+        self._rotation -= 90
+        if self._rotation < 0:
+            self._rotation = 270
+        pixel_list = [back_colour] * 8
+        pixel_list.extend(self.get_char_pixels(s))
+        pixel_list.extend([back_colour] * 16)
+        coloured_pixels = [text_colour if pixel == [255, 255, 255] else back_colour for pixel in pixel_list]
+        self.set_pixels(coloured_pixels)
+        self._rotation = previous_rotation
 
     ####
     # Environmental sensors
