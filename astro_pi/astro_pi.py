@@ -31,7 +31,9 @@ class AstroPi(object):
 
         self._rotation = 0
 
-        # Load text assets
+        # Text assets are rotated right through 90 degrees to allow blocks of 40 contiguous pixels to represent one 5 x 8 character
+        # These are stored in a 8 x 640 pixel png image with characters arranged adjacently
+        # Consequently we must rotate the pixel map left through 90 degrees to compensate when drawing text
         dir_path = os.path.dirname(__file__)
         text_image_file = os.path.join(dir_path, '%s.png' % text_assets)
         text_file = os.path.join(dir_path, '%s.txt' % text_assets)
@@ -194,6 +196,7 @@ class AstroPi(object):
             return self._text_dict['?']
 
     def show_message(self, text_string, scroll_speed = .07, text_colour = [255, 255, 255], back_colour = [0, 0, 0]):
+        # We must rotate the pixel map left through 90 degrees when drawing text, see __init__
         previous_rotation = self._rotation
         self._rotation -= 90
         if self._rotation < 0:
@@ -221,6 +224,7 @@ class AstroPi(object):
     def show_letter(self, s, text_colour = [255, 255, 255], back_colour = [0, 0, 0]):
         if len(s) > 1:
             raise ValueError('Only one character may be passed into this method')
+        # We must rotate the pixel map left through 90 degrees when drawing text, see __init__
         previous_rotation = self._rotation
         self._rotation -= 90
         if self._rotation < 0:
