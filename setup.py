@@ -7,8 +7,8 @@ def read(fname):
 
 setup(
     name="Astro Pi HAT",
-    version="0.0.1",
-    author="Dave Honness",
+    version="0.0.2",
+    author="Dave Honess",
     author_email="dave@raspberrypi.org",
     description="Astro Pi sensor board for the Raspberry Pi",
     license="BSD",
@@ -22,6 +22,8 @@ setup(
     packages=[
         "astro_pi",
     ],
+    package_data={"txt": ['astro_pi_text.txt'], "png": ['astro_pi_text.png']},
+    include_package_data=True,
     install_requires=[
         "RPi.GPIO",
     ],

@@ -1,5 +1,3 @@
 include README.rst
 include CONTRIBUTING.md
 include LICENCE.txt
-include astro_pi/astro_pi_text.png
-include astro_pi/astro_pi_text.txt
