@@ -45,7 +45,8 @@ class AstroPi(object):
         for index, s in enumerate(loaded_text):
             start = index * 40
             end = start + 40
-            self._text_dict[s] = text_pixels[start:end]
+            char = text_pixels[start:end]
+            self._text_dict[s] = self.trim_whitespace(char)
 
         # Load IMU settings and calibration data
         self.imu_settings = RTIMU.Settings(imu_settings_file)
@@ -65,6 +66,23 @@ class AstroPi(object):
     ####
     # LED Matrix
     ####
+
+    def trim_whitespace(self, char): # For loading text assets only
+        psum = lambda x: sum(sum(x, []))
+        if psum(char) > 0:
+            is_empty = True
+            while is_empty: # From front
+                row = char[0:8]
+                is_empty = psum(row) == 0
+                if is_empty:
+                    del char[0:8]
+            is_empty = True
+            while is_empty: # From back
+                row = char[-8:]
+                is_empty = psum(row) == 0
+                if is_empty:
+                   del char[-8:]
+        return char
 
     def set_rotation(self, r = 0, redraw = True):
         if r in self.pix_map.keys():
