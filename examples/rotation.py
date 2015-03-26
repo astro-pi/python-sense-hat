@@ -1,9 +1,10 @@
 #!/usr/bin/python
-import sys, time
+import sys
+import time
 from astro_pi import AstroPi
 
-X = [255,0,0]
-O = [255,255,255]
+X = [255, 0, 0]
+O = [255, 255, 255]
 
 question_mark = [
 O, O, O, X, X, O, O, O,
