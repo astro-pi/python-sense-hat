@@ -1,19 +1,32 @@
 #!/usr/bin/python
-import struct, os, sys, math, time, numpy as np, RTIMU
-from PIL import Image # PIL and RTIMU are currently only Python 2 
+import struct
+import os
+import sys
+import math
+import time
+import numpy as np
+import RTIMU
+from PIL import Image  # PIL and RTIMU are currently only Python 2
+
 
 class AstroPi(object):
-    def __init__(self, fb_device = '/dev/fb1', imu_settings_file = 'RTIMULib', text_assets = 'astro_pi_text'):
-        self.fb_device = fb_device
+    def __init__(
+            self,
+            fb_device='/dev/fb1',
+            imu_settings_file='RTIMULib',
+            text_assets='astro_pi_text'
+        ):
+
+        self._fb_device = fb_device
 
         # 0 is With B+ HDMI port facing downwards
         pix_map0 = np.array([
-            [ 0,  1,  2,  3,  4,  5,  6,  7],
-            [ 8,  9, 10, 11, 12, 13, 14, 15],
+             [0,  1,  2,  3,  4,  5,  6,  7],
+             [8,  9, 10, 11, 12, 13, 14, 15],
             [16, 17, 18, 19, 20, 21, 22, 23],
-            [24, 25, 26, 27, 28, 29, 30, 31], 
+            [24, 25, 26, 27, 28, 29, 30, 31],
             [32, 33, 34, 35, 36, 37, 38, 39],
-            [40, 41, 42, 43, 44, 45, 46, 47], 
+            [40, 41, 42, 43, 44, 45, 46, 47],
             [48, 49, 50, 51, 52, 53, 54, 55],
             [56, 57, 58, 59, 60, 61, 62, 63]
         ], int)
@@ -22,21 +35,48 @@ class AstroPi(object):
         pix_map180 = np.rot90(pix_map90)
         pix_map270 = np.rot90(pix_map180)
 
-        self.pix_map = {
+        self._pix_map = {
               0: pix_map0,
              90: pix_map90,
             180: pix_map180,
-            270: pix_map270 
+            270: pix_map270
         }
 
         self._rotation = 0
 
-        # Text assets are rotated right through 90 degrees to allow blocks of 40 contiguous pixels to represent one 5 x 8 character
-        # These are stored in a 8 x 640 pixel png image with characters arranged adjacently
-        # Consequently we must rotate the pixel map left through 90 degrees to compensate when drawing text
+        # Load text assets
         dir_path = os.path.dirname(__file__)
-        text_image_file = os.path.join(dir_path, '%s.png' % text_assets)
-        text_file = os.path.join(dir_path, '%s.txt' % text_assets)
+        self._load_text_assets(
+            os.path.join(dir_path, '%s.png' % text_assets),
+            os.path.join(dir_path, '%s.txt' % text_assets)
+        )
+
+        # Load IMU settings and calibration data
+        self._imu_settings = RTIMU.Settings(imu_settings_file)
+        self._imu = RTIMU.RTIMU(self._imu_settings)
+        self._imu_init = False  # Will be initialised as and when needed
+        self._pressure = RTIMU.RTPressure(self._imu_settings)
+        self._pressure_init = False  # Will be initialised as and when needed
+        self._last_orientation = {'pitch': 0, 'roll': 0, 'yaw': 0}
+        self._compass_enabled = False
+        self._gyro_enabled = False
+        self._accel_enabled = False
+
+    ####
+    # Text assets
+    ####
+
+    # Text asset files are rotated right through 90 degrees to allow blocks of
+    # 40 contiguous pixels to represent one 5 x 8 character. These are stored
+    # in a 8 x 640 pixel png image with characters arranged adjacently
+    # Consequently we must rotate the pixel map left through 90 degrees to
+    # compensate when drawing text
+
+    def _load_text_assets(self, text_image_file, text_file):
+        """
+        Internal. Builds a character indexed dictionary of pixels used by the
+        show_message function below
+        """
 
         text_pixels = self.load_image(text_image_file, False)
         with open(text_file, 'r') as f:
@@ -46,46 +86,41 @@ class AstroPi(object):
             start = index * 40
             end = start + 40
             char = text_pixels[start:end]
-            self._text_dict[s] = self.trim_whitespace(char)
+            self._text_dict[s] = self._trim_whitespace(char)
 
-        # Load IMU settings and calibration data
-        self.imu_settings = RTIMU.Settings(imu_settings_file)
-        self.imu = RTIMU.RTIMU(self.imu_settings)
+    def _trim_whitespace(self, char):  # For loading text assets only
+        """
+        Internal. Trims white space pixels from the front and back of loaded
+        text characters
+        """
 
-        try: 
-            assert(self.imu.IMUInit())
-            print("IMU Init Succeeded");
-        except AssertionError:
-            raise OSError("IMU Init Failed, please run as root / use sudo");
-
-        self._last_orientation = { 'pitch': 0, 'roll': 0, 'yaw': 0 }
-        self._compass_enabled = self._gyro_enabled = self._accel_enabled = False
-        self.imu_poll_interval = self.imu.IMUGetPollInterval() * 0.001
-        self.set_imu_config(True, True, True) # Enable everything on IMU
-
-    ####
-    # LED Matrix
-    ####
-
-    def trim_whitespace(self, char): # For loading text assets only
         psum = lambda x: sum(sum(x, []))
         if psum(char) > 0:
             is_empty = True
-            while is_empty: # From front
+            while is_empty:  # From front
                 row = char[0:8]
                 is_empty = psum(row) == 0
                 if is_empty:
                     del char[0:8]
             is_empty = True
-            while is_empty: # From back
+            while is_empty:  # From back
                 row = char[-8:]
                 is_empty = psum(row) == 0
                 if is_empty:
-                   del char[-8:]
+                    del char[-8:]
         return char
 
-    def set_rotation(self, r = 0, redraw = True):
-        if r in self.pix_map.keys():
+    ####
+    # LED Matrix
+    ####
+
+    def set_rotation(self, r=0, redraw=True):
+        """
+        Sets the LED matrix rotation for viewing, adjust if the Pi is upside
+        down or sideways. 0 is with the Pi HDMI port facing downwards
+        """
+
+        if r in self._pix_map.keys():
             if redraw:
                 pixel_list = self.get_pixels()
             self._rotation = r
@@ -94,14 +129,22 @@ class AstroPi(object):
         else:
             raise ValueError('Rotation must be 0, 90, 180 or 270 degrees')
 
-    def pack_bin(self, pix): # Encodes python list [R,G,B] into 16 bit RGB565
+    def _pack_bin(self, pix):
+        """
+        Internal. Encodes python list [R,G,B] into 16 bit RGB565
+        """
+
         r = (pix[0] >> 3) & 0x1F
         g = (pix[1] >> 2) & 0x3F
         b = (pix[2] >> 3) & 0x1F
         bits16 = (r << 11) + (g << 5) + b
         return struct.pack('H', bits16)
 
-    def unpack_bin(self, packed): # Decodes 16 bit RGB565 into python list [R,G,B]
+    def _unpack_bin(self, packed):
+        """
+        Internal. Decodes 16 bit RGB565 into python list [R,G,B]
+        """
+
         output = struct.unpack('H', packed)
         bits16 = output[0]
         r = (bits16 & 0xF800) >> 11
@@ -109,7 +152,11 @@ class AstroPi(object):
         b = (bits16 & 0x1F)
         return [int(r << 3), int(g << 2), int(b << 3)]
 
-    def flip_h(self, redraw = True): # Flip horizontal
+    def flip_h(self, redraw=True):
+        """
+        Flip LED matrix horizontal
+        """
+
         pixel_list = self.get_pixels()
         flipped = []
         for i in range(8):
@@ -119,7 +166,11 @@ class AstroPi(object):
             self.set_pixels(flipped)
         return flipped
 
-    def flip_v(self, redraw = True): # Flip vertical
+    def flip_v(self, redraw=True):
+        """
+        Flip LED matrix vertical
+        """
+
         pixel_list = self.get_pixels()
         flipped = []
         for i in reversed(range(8)):
@@ -130,6 +181,12 @@ class AstroPi(object):
         return flipped
 
     def set_pixels(self, pixel_list):
+        """
+        Accepts a list containing 64 smaller lists of [R,G,B] pixels and
+        updates the LED matrix. R,G,B elements must intergers between 0
+        and 255
+        """
+
         if len(pixel_list) != 64:
             raise ValueError('Pixel lists must have 64 elements')
 
@@ -141,23 +198,35 @@ class AstroPi(object):
                 if element > 255 or element < 0:
                     raise ValueError('Pixel at index %d is invalid. Pixel elements must be between 0 and 255' % index)
 
-        with open(self.fb_device, 'wb') as f:
-            map = self.pix_map[self._rotation]
+        with open(self._fb_device, 'wb') as f:
+            map = self._pix_map[self._rotation]
             for index, pix in enumerate(pixel_list):
-                f.seek(map[index // 8][index % 8] * 2) # Two bytes per pixel in fb memory, 16 bit RGB565
-                f.write(self.pack_bin(pix))
+                # Two bytes per pixel in fb memory, 16 bit RGB565
+                f.seek(map[index // 8][index % 8] * 2)
+                f.write(self._pack_bin(pix))
 
     def get_pixels(self):
+        """
+        Returns a list containing 64 smaller lists of [R,G,B] pixels
+        representing what is currently displayed on the LED matrix
+        """
+
         pixel_list = []
-        with open(self.fb_device, 'rb') as f:
-            map = self.pix_map[self._rotation]
+        with open(self._fb_device, 'rb') as f:
+            map = self._pix_map[self._rotation]
             for row in range(8):
                 for col in range(8):
-                    f.seek(map[row][col] * 2) # Two bytes per pixel in fb memory, 16 bit RGB565
-                    pixel_list.append(self.unpack_bin(f.read(2)))
+                    # Two bytes per pixel in fb memory, 16 bit RGB565
+                    f.seek(map[row][col] * 2)
+                    pixel_list.append(self._unpack_bin(f.read(2)))
         return pixel_list
 
     def set_pixel_xy(self, x, y, pix):
+        """
+        Updates the single [R,G,B] pixel specified by x and y on the LED matrix
+        Top left = 0,0 Bottom right = 7,7
+        """
+
         if x > 7 or x < 0:
             raise ValueError('X position must be between 0 and 7')
 
@@ -171,12 +240,18 @@ class AstroPi(object):
             if element > 255 or element < 0:
                 raise ValueError('Pixel elements must be between 0 and 255')
 
-        with open(self.fb_device, 'wb') as f:
-            map = self.pix_map[self._rotation]
-            f.seek(map[x][y] * 2) # Two bytes per pixel in fb memory, 16 bit RGB565
-            f.write(self.pack_bin(pix))
+        with open(self._fb_device, 'wb') as f:
+            map = self._pix_map[self._rotation]
+            # Two bytes per pixel in fb memory, 16 bit RGB565
+            f.seek(map[x][y] * 2)
+            f.write(self._pack_bin(pix))
 
     def get_pixel_xy(self, x, y):
+        """
+        Returns a list of [R,G,B] representing the pixel specified by x and y
+        on the LED matrix. Top left = 0,0 Bottom right = 7,7
+        """
+
         if x > 7 or x < 0:
             raise ValueError('X position must be between 0 and 7')
 
@@ -185,36 +260,63 @@ class AstroPi(object):
 
         pix = None
 
-        with open(self.fb_device, 'rb') as f:
-            map = self.pix_map[self._rotation]
-            f.seek(map[x][y] * 2) # Two bytes per pixel in fb memory, 16 bit RGB565
-            pix = self.unpack_bin(f.read(2))
+        with open(self._fb_device, 'rb') as f:
+            map = self._pix_map[self._rotation]
+            # Two bytes per pixel in fb memory, 16 bit RGB565
+            f.seek(map[x][y] * 2)
+            pix = self._unpack_bin(f.read(2))
 
         return pix
 
-    def load_image(self, file_name, redraw = True):
-        if not os.path.exists(file_name):
-            raise IOError('%s not found' % file_name)
+    def load_image(self, file_path, redraw=True):
+        """
+        Accepts a path to an 8 x 8 image file and updates the LED matrix with
+        the image
+        """
 
-        img = Image.open(file_name).convert('RGB')
-        pixel_list = map(list,img.getdata())
+        if not os.path.exists(file_path):
+            raise IOError('%s not found' % file_path)
+
+        img = Image.open(file_path).convert('RGB')
+        pixel_list = map(list, img.getdata())
 
         if redraw:
             self.set_pixels(pixel_list)
 
         return pixel_list
 
-    def clear(self, colour = [0,0,0]):
+    def clear(self, colour=[0, 0, 0]):
+        """
+        Clears the LED matrix with a single colour, default is black / off
+        """
+
         self.set_pixels([colour] * 64)
 
-    def get_char_pixels(self, s):
+    def _get_char_pixels(self, s):
+        """
+        Internal. Safeguards the character indexed dictionary for the
+        show_message function below
+        """
+
         if len(s) == 1 and s in self._text_dict.keys():
             return self._text_dict[s]
         else:
             return self._text_dict['?']
 
-    def show_message(self, text_string, scroll_speed = .07, text_colour = [255, 255, 255], back_colour = [0, 0, 0]):
-        # We must rotate the pixel map left through 90 degrees when drawing text, see __init__
+    def show_message(
+            self,
+            text_string,
+            scroll_speed=.1,
+            text_colour=[255, 255, 255],
+            back_colour=[0, 0, 0]
+        ):
+        """
+        Scrolls a string of text across the LED matrix using the specified
+        speed and colours
+        """
+
+        # We must rotate the pixel map left through 90 degrees when drawing
+        # text, see _load_text_assets
         previous_rotation = self._rotation
         self._rotation -= 90
         if self._rotation < 0:
@@ -225,11 +327,14 @@ class AstroPi(object):
         scroll_pixels = []
         scroll_pixels.extend(string_padding)
         for s in text_string:
-            scroll_pixels.extend(self.get_char_pixels(s))
+            scroll_pixels.extend(self._get_char_pixels(s))
             scroll_pixels.extend(letter_padding)
         scroll_pixels.extend(string_padding)
         # Recolour pixels as necessary
-        coloured_pixels = [text_colour if pixel == [255,255,255] else back_colour for pixel in scroll_pixels]
+        coloured_pixels = [
+            text_colour if pixel == [255, 255, 255] else back_colour
+            for pixel in scroll_pixels
+        ]
         # Shift right by 8 pixels per frame to scroll
         scroll_length = len(coloured_pixels) // 8
         for i in range(scroll_length - 8):
@@ -239,18 +344,32 @@ class AstroPi(object):
             time.sleep(scroll_speed)
         self._rotation = previous_rotation
 
-    def show_letter(self, s, text_colour = [255, 255, 255], back_colour = [0, 0, 0]):
+    def show_letter(
+            self,
+            s,
+            text_colour=[255, 255, 255],
+            back_colour=[0, 0, 0]
+        ):
+        """
+        Displays a single text character on the LED matrix using the specified
+        colours
+        """
+
         if len(s) > 1:
             raise ValueError('Only one character may be passed into this method')
-        # We must rotate the pixel map left through 90 degrees when drawing text, see __init__
+        # We must rotate the pixel map left through 90 degrees when drawing
+        # text, see _load_text_assets
         previous_rotation = self._rotation
         self._rotation -= 90
         if self._rotation < 0:
             self._rotation = 270
         pixel_list = [back_colour] * 8
-        pixel_list.extend(self.get_char_pixels(s))
+        pixel_list.extend(self._get_char_pixels(s))
         pixel_list.extend([back_colour] * 16)
-        coloured_pixels = [text_colour if pixel == [255, 255, 255] else back_colour for pixel in pixel_list]
+        coloured_pixels = [
+            text_colour if pixel == [255, 255, 255] else back_colour
+            for pixel in pixel_list
+        ]
         self.set_pixels(coloured_pixels)
         self._rotation = previous_rotation
 
@@ -258,69 +377,173 @@ class AstroPi(object):
     # Environmental sensors
     ####
 
+    def _init_pressure(self):
+        """
+        Internal. Initialises the pressure sensor via RTIMU
+        """
+
+        if not self._pressure_init:
+            try:
+                self._pressure_init = self._pressure.pressureInit()
+                assert(self._pressure_init)
+                print("Pressure sensor Init Succeeded")
+            except AssertionError:
+                raise OSError("Pressure Init Failed, please run as root / use sudo")
+
     def get_humidity(self):
         raise NotImplementedError
 
     def get_temperature(self):
-        raise NotImplementedError
+        """
+        Returns the temperature in Celsius as a float
+        """
 
-    def get_pressure(self):
-        raise NotImplementedError
+        self._init_pressure()  # Ensure pressure sensor is initialised
+        temp = 0
+        data = self._pressure.pressureRead()
+        if (data[2]):  # Temp valid
+            temp = data[3]
+        return temp
+
+    def get_pressure_mbar(self):
+        """
+        Returns the pressure in Millibars as a float
+        """
+
+        self._init_pressure()  # Ensure pressure sensor is initialised
+        pressure = 0
+        data = self._pressure.pressureRead()
+        if (data[0]):  # Pressure valid
+            pressure = data[1]
+        return pressure
+
+    def get_pressure_kpa(self):
+        """
+        Returns the pressure in kilopascals as a float
+        """
+
+        return self.get_pressure_mbar() * 0.1
 
     ####
     # IMU Sensor
     ####
 
-    def set_imu_config(self, compass_enabled, gyro_enabled, accel_enabled):
-        # If the consuming code always calls this just before get_orientation the IMU consistently fails to read
-        # So prevent unnecessary calls to IMU config functions using state variables
+    def _init_imu(self):
+        """
+        Internal. Initialises the IMU sensor via RTIMU
+        """
 
-        if not isinstance(compass_enabled, bool) or not isinstance(gyro_enabled, bool) or not isinstance(accel_enabled, bool):
+        if not self._imu_init:
+            try:
+                self._imu_init = self._imu.IMUInit()
+                assert(self._imu_init)
+                print("IMU Init Succeeded")
+                self._imu_poll_interval = self._imu.IMUGetPollInterval() * 0.001
+                # Enable everything on IMU
+                self.set_imu_config(True, True, True)
+            except AssertionError:
+                raise OSError("IMU Init Failed, please run as root / use sudo")
+
+    def set_imu_config(self, compass_enabled, gyro_enabled, accel_enabled):
+        """
+        Enables and disables the gyroscope, accelerometer and/or magnetometer
+        input to the get_orientation functions
+        """
+
+        # If the consuming code always calls this just before get_orientation
+        # the IMU consistently fails to read. So prevent unnecessary calls to
+        # IMU config functions using state variables
+
+        self._init_imu()  # Ensure imu is initialised
+
+        if (not isinstance(compass_enabled, bool)
+        or not isinstance(gyro_enabled, bool)
+        or not isinstance(accel_enabled, bool)):
             raise TypeError('All set_imu_config parameters must be of boolan type')
 
         if self._compass_enabled != compass_enabled:
             self._compass_enabled = compass_enabled
-            self.imu.setCompassEnable(self._compass_enabled)
+            self._imu.setCompassEnable(self._compass_enabled)
 
         if self._gyro_enabled != gyro_enabled:
             self._gyro_enabled = gyro_enabled
-            self.imu.setGyroEnable(self._gyro_enabled)
+            self._imu.setGyroEnable(self._gyro_enabled)
 
         if self._accel_enabled != accel_enabled:
             self._accel_enabled = accel_enabled
-            self.imu.setAccelEnable(self._accel_enabled)
+            self._imu.setAccelEnable(self._accel_enabled)
 
-    def get_orientation(self): # Consuming code to use directly to combine multiple IMU sensors
+    def _read_imu(self):
+        """
+        Internal. Tries to read the IMU sensor three times before giving up
+        """
+
+        self._init_imu()  # Ensure imu is initialised
+
         attempts = 0
         success = False
 
         while not success and attempts < 3:
-            success = self.imu.IMURead()
+            success = self._imu.IMURead()
             attempts += 1
-            time.sleep(self.imu_poll_interval)
+            time.sleep(self._imu_poll_interval)
 
-        if success:
-            data = self.imu.getIMUData()
-            fusionPose = data["fusionPose"]
-            r = math.degrees(fusionPose[0]) # Between -180 and +180
-            p = math.degrees(fusionPose[1])
-            y = math.degrees(fusionPose[2])
-            self._last_orientation = {'roll': r + 180, 'pitch': p + 180, 'yaw': y + 180 } # Beteen 0 and 360 is easier for schools
+        return success
 
-        return self._last_orientation # Current or previous successful IMU read
+    def get_orientation_radians(self):
+        """
+        Returns a dictionary object to represent the current orientation in
+        radians using the aircraft principal axes of pitch, roll and yaw
+        """
 
-    def get_compass(self): # Compass angle only, North
+        if self._read_imu():
+            data = self._imu.getIMUData()
+            fusion_pose = data["fusionPose"]
+            self._last_orientation = {
+                'roll': fusion_pose[0],
+                'pitch': fusion_pose[1],
+                'yaw': fusion_pose[2]
+            }
+
+        # Current or previous successful IMU read
+        return self._last_orientation
+
+    def get_orientation_degrees(self):
+        """
+        Returns a dictionary object to represent the current orientation
+        in degrees, -180 to +180, using the aircraft principal axes of
+        pitch, roll and yaw
+        """
+
+        orientation = self.get_orientation_radians()
+        for key, val in orientation.items():
+            orientation[key] = math.degrees(val)
+        return orientation
+
+    def get_compass(self):
+        """
+        Returns the direction of North in degrees as a float
+        """
+
         self.set_imu_config(True, False, False)
-        orientation = self.get_orientation()
+        orientation = self.get_orientation_degrees()
         if type(orientation) is dict and 'yaw' in orientation.keys():
             return orientation['yaw']
         else:
             return None
-   
-    def get_gyroscope(self): # Gyroscope orientation only
-        self.set_imu_config(False, True, False)
-        return self.get_orientation()
 
-    def get_accelerometer(self): # Accelerometer orientation only
+    def get_gyroscope(self):
+        """
+        Gyroscope orientation only
+        """
+
+        self.set_imu_config(False, True, False)
+        return self.get_orientation_degrees()
+
+    def get_accelerometer(self):
+        """
+        Accelerometer orientation only
+        """
+
         self.set_imu_config(False, False, True)
-        return self.get_orientation()
+        return self.get_orientation_degrees()
