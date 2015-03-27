@@ -3,9 +3,6 @@ import os
 import time
 import pygame  # See http://www.pygame.org/docs
 
-# Set SDL to use the main Linux frame buffer so it does not need the Desktop
-os.environ["SDL_VIDEODRIVER"] = "fbcon"  # Remove this line if using Desktop
-
 print("Press Escape to quit")
 time.sleep(1)
 
