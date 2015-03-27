@@ -1,4 +1,5 @@
 #!/usr/bin/python
+import time
 from astro_pi import AstroPi
 
 ap = AstroPi()
@@ -6,6 +7,8 @@ ap = AstroPi()
 r = 255
 g = 0
 b = 0
+
+msleep = lambda x: time.sleep(x/1000.0)
 
 
 def next_colour():
@@ -33,4 +36,5 @@ def next_colour():
 
 while True:
     ap.clear([r, g, b])
+    msleep(2)
     next_colour()
