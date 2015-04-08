@@ -57,6 +57,8 @@ class AstroPi(object):
         self._imu_init = False  # Will be initialised as and when needed
         self._pressure = RTIMU.RTPressure(self._imu_settings)
         self._pressure_init = False  # Will be initialised as and when needed
+        self._humidity = RTIMU.RTHumidity(self._imu_settings)
+        self._humidity_init = False  # Will be initialised as and when needed
         self._last_orientation = {'pitch': 0, 'roll': 0, 'yaw': 0}
         self._compass_enabled = False
         self._gyro_enabled = False
@@ -377,6 +379,19 @@ class AstroPi(object):
     # Environmental sensors
     ####
 
+    def _init_humidity(self):
+        """
+        Internal. Initialises the humidity sensor via RTIMU
+        """
+
+        if not self._humidity_init:
+            try:
+                self._humidity_init = self._humidity.humidityInit()
+                assert(self._humidity_init)
+                print("Humidity sensor Init Succeeded")
+            except AssertionError:
+                raise OSError("Humidity Init Failed, please run as root / use sudo")
+
     def _init_pressure(self):
         """
         Internal. Initialises the pressure sensor via RTIMU
@@ -391,11 +406,32 @@ class AstroPi(object):
                 raise OSError("Pressure Init Failed, please run as root / use sudo")
 
     def get_humidity(self):
-        raise NotImplementedError
-
-    def get_temperature(self):
         """
-        Returns the temperature in Celsius as a float
+        Returns the percentage of relative humidity as a float
+        """
+
+        self._init_humidity()  # Ensure humidity sensor is initialised
+        humidity = 0
+        data = self._humidity.humidityRead()
+        if (data[0]):  # Humidity valid
+            humidity = data[1]
+        return humidity
+
+    def get_temperature_from_humidity(self):
+        """
+        Returns the temperature in Celsius as a float from the humidity sensor
+        """
+
+        self._init_humidity()  # Ensure humidity sensor is initialised
+        temp = 0
+        data = self._humidity.humidityRead()
+        if (data[2]):  # Temp valid
+            temp = data[3]
+        return temp
+
+    def get_temperature_from_pressure(self):
+        """
+        Returns the temperature in Celsius as a float from the pressure sensor
         """
 
         self._init_pressure()  # Ensure pressure sensor is initialised
@@ -405,7 +441,10 @@ class AstroPi(object):
             temp = data[3]
         return temp
 
-    def get_pressure_mbar(self):
+    def get_temperature(self):
+        return self.get_temperature_from_humidity()
+
+    def get_pressure(self):
         """
         Returns the pressure in Millibars as a float
         """
@@ -416,13 +455,6 @@ class AstroPi(object):
         if (data[0]):  # Pressure valid
             pressure = data[1]
         return pressure
-
-    def get_pressure_kpa(self):
-        """
-        Returns the pressure in kilopascals as a float
-        """
-
-        return self.get_pressure_mbar() * 0.1
 
     ####
     # IMU Sensor
