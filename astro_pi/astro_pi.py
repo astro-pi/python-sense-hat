@@ -543,13 +543,14 @@ class AstroPi(object):
     def get_orientation_degrees(self):
         """
         Returns a dictionary object to represent the current orientation
-        in degrees, -180 to +180, using the aircraft principal axes of
+        in degrees, 0 to 360, using the aircraft principal axes of
         pitch, roll and yaw
         """
 
         orientation = self.get_orientation_radians()
         for key, val in orientation.items():
-            orientation[key] = math.degrees(val)
+            deg = math.degrees(val)  # Result is -180 to +180
+            orientation[key] = deg + 360 if deg < 0 else deg
         return orientation
 
     def get_compass(self):
