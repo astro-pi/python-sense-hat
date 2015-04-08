@@ -8,7 +8,7 @@ r = 255
 g = 0
 b = 0
 
-msleep = lambda x: time.sleep(x/1000.0)
+msleep = lambda x: time.sleep(x / 1000.0)
 
 
 def next_colour():
