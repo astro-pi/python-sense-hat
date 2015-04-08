@@ -12,7 +12,8 @@ prev_x = 0
 prev_y = 0
 
 while True:
-    dir = ap.get_compass() + 180  # Angle will be -180 to +180
+    dir = ap.get_compass()
+    print dir
     edge_index = int((len(edge_loop) / 360.0) * dir)
     offset = edge_loop[edge_index]
 
