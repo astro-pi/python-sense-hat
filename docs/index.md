@@ -152,8 +152,85 @@ Note: Please read the note under `get_pixels`
 
 #### load_image
 
+Loads an image file, converts it to RGB format and displays it on the LED matrix. The image must be 8 x 8 pixels in size.
 
+Parameter | Valid values | Explanation
+--- | --- | ---
+`file_path` | `String` | The file system path to the image file to load.
+`redraw` | `True` `False` | Whether or not to redraw the loaded image file on the LED matrix. Defaults to `True`
 
+```python
+from astro_pi import AstroPi
+
+ap = AstroPi()
+ap.load_image("space_invader.png")
+```
+
+The function also returns a pixel list representing the image converted into RGB format if further manipulation is desired.
+
+```python
+from astro_pi import AstroPi
+
+ap = AstroPi()
+invader_pixels = ap.load_image("space_invader.png", redraw=False)
+```
+
+#### clear
+
+Sets the entire LED matrix to a single colour, defaults to blank / off.
+
+Parameter | Valid values | Explanation
+--- | --- | ---
+`colour` | `[R, G, B]` | A list containing the R-G-B (red, green, blue) colour. Each R-G-B element must be an integer between 0 and 255. Defaults to `[0, 0, 0]`
+
+```python
+import time
+from astro_pi import AstroPi
+
+ap = AstroPi()
+ap.clear([255, 255, 255])
+time.sleep(1)
+ap.clear()
+```
+
+#### show_message
+
+Scrolls a text message from right to left across the LED matrix and at the specified speed, in the specified colour and background colour.
+
+Parameter | Valid values | Explanation
+--- | --- | ---
+`text_string` | `String` | The message to scroll. 
+`scroll_speed` | `Float` | The speed at which the text should scroll. This value represents the time paused for between shifting the text to the left by one column of pixels. Defaults to `0.1`
+`text_colour` | `[R, G, B]` | A list containing the R-G-B (red, green, blue) colour of the text. Each R-G-B element must be an integer between 0 and 255. Defaults to `[255, 255, 255]` white.
+`back_colour` | `[R, G, B]` | A list containing the R-G-B (red, green, blue) colour of the background. Each R-G-B element must be an integer between 0 and 255. Defaults to `[0, 0, 0]` black / off.
+
+```python
+from astro_pi import AstroPi
+
+ap = AstroPi()
+ap.show_message("One small step for Pi!", text_colour=[255, 0, 0])
+```
+
+#### show_letter
+
+Displays a single text character on the LED matrix.
+
+Parameter | Valid values | Explanation
+--- | --- | ---
+`s` | `String` | The letter to show. 
+`text_colour` | `[R, G, B]` | A list containing the R-G-B (red, green, blue) colour of the letter. Each R-G-B element must be an integer between 0 and 255. Defaults to `[255, 255, 255]` white.
+`back_colour` | `[R, G, B]` | A list containing the R-G-B (red, green, blue) colour of the background. Each R-G-B element must be an integer between 0 and 255. Defaults to `[0, 0, 0]` black / off.
+
+```python
+import time
+from astro_pi import AstroPi
+
+ap = AstroPi()
+
+for i in reversed(range(0,10)):
+    ap.show_letter(str(i))
+    time.sleep(1)
+```
 
 ### Environmental sensors
 
