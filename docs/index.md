@@ -11,7 +11,6 @@ Coming soon.
 ## Usage
 
 ```python
-#!/usr/bin/python
 from astro_pi import AstroPi
 
 ap = AstroPi()
@@ -30,7 +29,6 @@ Parameter | Valid values | Explanation
 `redraw` | `True` `False` | Whether or not to redraw what is already being displayed on the LED matrix. Defaults to `True`
 
 ```python
-#!/usr/bin/python
 from astro_pi import AstroPi
 
 ap = AstroPi()
@@ -46,7 +44,6 @@ Parameter | Valid values | Explanation
 `redraw` | `True` `False` | Whether or not to redraw what is already being displayed on the LED matrix. Defaults to `True`
 
 ```python
-#!/usr/bin/python
 from astro_pi import AstroPi
 
 ap = AstroPi()
@@ -62,7 +59,6 @@ Parameter | Valid values | Explanation
 `redraw` | `True` `False` | Whether or not to redraw what is already being displayed on the LED matrix. Defaults to `True`
 
 ```python
-#!/usr/bin/python
 from astro_pi import AstroPi
 
 ap = AstroPi()
@@ -78,7 +74,6 @@ Parameter | Valid values | Explanation
 `pixel_list` | `[[R, G, B] * 64]` | A list containing 64 smaller lists of `[R, G, B]` pixels (red, green, blue). Each R-G-B element must be an integer between 0 and 255.
 
 ```python
-#!/usr/bin/python
 from astro_pi import AstroPi
 
 ap = AstroPi()
@@ -107,7 +102,6 @@ Returns a 64 length list of pixel values representing what is currently displaye
 The returned list will contain 64 smaller lists of `[R, G, B]` pixels (red, green, blue). Each R-G-B element will be an integer between 0 and 255.
 
 ```python
-#!/usr/bin/python
 from astro_pi import AstroPi
 
 ap = AstroPi()
@@ -129,7 +123,6 @@ Parameter | Valid values | Explanation
 `pix` | `[R, G, B]` | A list containing the R-G-B (red, green, blue) colour the pixel should be set to. Each R-G-B element must be an integer between 0 and 255.
 
 ```python
-#!/usr/bin/python
 from astro_pi import AstroPi
 
 ap = AstroPi()
@@ -138,6 +131,29 @@ ap.set_pixel_xy(0, 7, [0, 255, 0])
 ap.set_pixel_xy(7, 0, [0, 0, 255])
 ap.set_pixel_xy(7, 7, [255, 0, 255])
 ```
+
+#### get_pixel_xy
+
+Returns a list of `[R, G, B]` representing the colour of an individual LED matrix pixel at the specified X-Y coordinate.
+
+Parameter | Valid values | Explanation
+--- | --- | ---
+`x` | `0 - 7` | 0 is on the left, 7 on the right.
+`y` | `0 - 7` | 0 is at the top, 7 at the bottom.
+
+```python
+from astro_pi import AstroPi
+
+ap = AstroPi()
+top_left_pixel = ap.get_pixel_xy(0, 0)
+```
+
+Note: Please read the note under `get_pixels`
+
+#### load_image
+
+
+
 
 ### Environmental sensors
 
