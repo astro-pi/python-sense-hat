@@ -60,6 +60,10 @@ class AstroPi(object):
         self._humidity = RTIMU.RTHumidity(self._imu_settings)
         self._humidity_init = False  # Will be initialised as and when needed
         self._last_orientation = {'pitch': 0, 'roll': 0, 'yaw': 0}
+        raw = {'x': 0, 'y': 0, 'z': 0}
+        self._last_compass_raw = raw
+        self._last_gyro_raw = raw
+        self._last_accel_raw = raw
         self._compass_enabled = False
         self._gyro_enabled = False
         self._accel_enabled = False
@@ -407,7 +411,7 @@ class AstroPi(object):
 
     def get_humidity(self):
         """
-        Returns the percentage of relative humidity as a float
+        Returns the percentage of relative humidity
         """
 
         self._init_humidity()  # Ensure humidity sensor is initialised
@@ -419,7 +423,7 @@ class AstroPi(object):
 
     def get_temperature_from_humidity(self):
         """
-        Returns the temperature in Celsius as a float from the humidity sensor
+        Returns the temperature in Celsius from the humidity sensor
         """
 
         self._init_humidity()  # Ensure humidity sensor is initialised
@@ -431,7 +435,7 @@ class AstroPi(object):
 
     def get_temperature_from_pressure(self):
         """
-        Returns the temperature in Celsius as a float from the pressure sensor
+        Returns the temperature in Celsius from the pressure sensor
         """
 
         self._init_pressure()  # Ensure pressure sensor is initialised
@@ -442,11 +446,15 @@ class AstroPi(object):
         return temp
 
     def get_temperature(self):
+        """
+        Returns the temperature in Celsius
+        """
+
         return self.get_temperature_from_humidity()
 
     def get_pressure(self):
         """
-        Returns the pressure in Millibars as a float
+        Returns the pressure in Millibars
         """
 
         self._init_pressure()  # Ensure pressure sensor is initialised
@@ -479,10 +487,10 @@ class AstroPi(object):
     def set_imu_config(self, compass_enabled, gyro_enabled, accel_enabled):
         """
         Enables and disables the gyroscope, accelerometer and/or magnetometer
-        input to the get_orientation functions
+        input to the orientation functions
         """
 
-        # If the consuming code always calls this just before get_orientation
+        # If the consuming code always calls this just before reading the IMU
         # the IMU consistently fails to read. So prevent unnecessary calls to
         # IMU config functions using state variables
 
@@ -522,22 +530,39 @@ class AstroPi(object):
 
         return success
 
+    def _get_raw_data(self, is_valid_key, data_key):
+        """
+        Internal. Returns the specified raw data from the IMU when valid
+        """
+
+        result = None
+
+        if self._read_imu():
+            data = self._imu.getIMUData()
+            if data[is_valid_key]:
+                raw = data[data_key]
+                result = {
+                    'x': raw[0],
+                    'y': raw[1],
+                    'z': raw[2]
+                }
+
+        return result
+
     def get_orientation_radians(self):
         """
         Returns a dictionary object to represent the current orientation in
         radians using the aircraft principal axes of pitch, roll and yaw
         """
 
-        if self._read_imu():
-            data = self._imu.getIMUData()
-            fusion_pose = data["fusionPose"]
-            self._last_orientation = {
-                'roll': fusion_pose[0],
-                'pitch': fusion_pose[1],
-                'yaw': fusion_pose[2]
-            }
+        raw = self._get_raw_data('fusionPoseValid', 'fusionPose')
 
-        # Current or previous successful IMU read
+        if raw is not None:
+            raw['roll'] = raw.pop('x')
+            raw['pitch'] = raw.pop('y')
+            raw['yaw'] = raw.pop('z')
+            self._last_orientation = raw
+
         return self._last_orientation
 
     def get_orientation_degrees(self):
@@ -553,9 +578,12 @@ class AstroPi(object):
             orientation[key] = deg + 360 if deg < 0 else deg
         return orientation
 
+    def get_orientation(self):
+        return self.get_orientation_degrees()
+
     def get_compass(self):
         """
-        Returns the direction of North in degrees as a float
+        Gets the direction of North from the magnetometer in degrees
         """
 
         self.set_imu_config(True, False, False)
@@ -565,18 +593,54 @@ class AstroPi(object):
         else:
             return None
 
+    def get_compass_raw(self):
+        """
+        Magnetometer x y z raw data in uT (micro teslas)
+        """
+
+        raw = self._get_raw_data('compassValid', 'compass')
+
+        if raw is not None:
+            self._last_compass_raw = raw
+
+        return self._last_compass_raw
+
     def get_gyroscope(self):
         """
-        Gyroscope orientation only
+        Gets the orientation in degrees from the gyroscope only
         """
 
         self.set_imu_config(False, True, False)
         return self.get_orientation_degrees()
 
+    def get_gyroscope_raw(self):
+        """
+        Gyroscope x y z raw data in radians per second
+        """
+
+        raw = self._get_raw_data('gyroValid', 'gyro')
+
+        if raw is not None:
+            self._last_gyro_raw = raw
+
+        return self._last_gyro_raw
+
     def get_accelerometer(self):
         """
-        Accelerometer orientation only
+        Gets the orientation in degrees from the accelerometer only
         """
 
         self.set_imu_config(False, False, True)
         return self.get_orientation_degrees()
+
+    def get_accelerometer_raw(self):
+        """
+        Accelerometer x y z raw data in Gs
+        """
+
+        raw = self._get_raw_data('accelValid', 'accel')
+
+        if raw is not None:
+            self._last_accel_raw = raw
+
+        return self._last_accel_raw
