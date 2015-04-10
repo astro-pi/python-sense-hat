@@ -92,7 +92,7 @@ class AstroPi(object):
             start = index * 40
             end = start + 40
             char = text_pixels[start:end]
-            self._text_dict[s] = self._trim_whitespace(char)
+            self._text_dict[s] = char
 
     def _trim_whitespace(self, char):  # For loading text assets only
         """
@@ -333,7 +333,7 @@ class AstroPi(object):
         scroll_pixels = []
         scroll_pixels.extend(string_padding)
         for s in text_string:
-            scroll_pixels.extend(self._get_char_pixels(s))
+            scroll_pixels.extend(self._trim_whitespace(self._get_char_pixels(s)))
             scroll_pixels.extend(letter_padding)
         scroll_pixels.extend(string_padding)
         # Recolour pixels as necessary
