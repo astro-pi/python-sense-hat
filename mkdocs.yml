@@ -1,0 +1,8 @@
+site_name: Astro Pi
+theme: united
+site_url: https://pythonhosted.org/astro_pi/
+repo_url: https://github.com/astro-pi/astro-pi-hat
+site_description: UK Space Astro Pi Competition Python Library
+site_author: David Honess
+site_favicon: img/favicon.ico
+site_dir: pythonhosted
