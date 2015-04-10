@@ -217,7 +217,7 @@ Displays a single text character on the LED matrix.
 
 Parameter | Valid values | Explanation
 --- | --- | ---
-`s` | `String` | The letter to show. 
+`s` | `String` | The letter to show, must be a string of length 1.
 `text_colour` | `[R, G, B]` | A list containing the R-G-B (red, green, blue) colour of the letter. Each R-G-B element must be an integer between 0 and 255. Defaults to `[255, 255, 255]` white.
 `back_colour` | `[R, G, B]` | A list containing the R-G-B (red, green, blue) colour of the background. Each R-G-B element must be an integer between 0 and 255. Defaults to `[0, 0, 0]` black / off.
 
@@ -233,5 +233,16 @@ for i in reversed(range(0,10)):
 ```
 
 ### Environmental sensors
+
+#### get_humidity
+
+Gets the percentage of relative humidity, the value returned will be a Float.
+
+```python
+from astro_pi import AstroPi
+
+ap = AstroPi()
+humidity = ap.get_humidity()
+```
 
 ### IMU Sensor
