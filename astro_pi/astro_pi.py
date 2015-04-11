@@ -5,8 +5,8 @@ import sys
 import math
 import time
 import numpy as np
-import RTIMU
-from PIL import Image  # PIL and RTIMU are currently only Python 2
+import RTIMU # custom version
+from PIL import Image  # pillow
 
 
 class AstroPi(object):
@@ -284,7 +284,7 @@ class AstroPi(object):
             raise IOError('%s not found' % file_path)
 
         img = Image.open(file_path).convert('RGB')
-        pixel_list = map(list, img.getdata())
+        pixel_list = list(map(list, img.getdata()))
 
         if redraw:
             self.set_pixels(pixel_list)
