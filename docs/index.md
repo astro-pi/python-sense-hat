@@ -16,17 +16,20 @@ from astro_pi import AstroPi
 ap = AstroPi()
 ```
 
-
 ### LED Matrix
 
 #### set_rotation
 
 If you're using the Pi upside down or sideways you can use this function to correct the orientation of the image being shown.
 
-Parameter | Valid values | Explanation
---- | --- | ---
-`r` | `0` `90` `180` `270` | The angle to rotate the LED matrix though. `0` is with the Raspberry Pi HDMI port facing downwards.
-`redraw` | `True` `False` | Whether or not to redraw what is already being displayed on the LED matrix. Defaults to `True`
+Parameter | Type | Valid values | Explanation
+--- | --- | --- | ---
+`r` | Integer | `0` `90` `180` `270` | The angle to rotate the LED matrix though. `0` is with the Raspberry Pi HDMI port facing downwards.
+`redraw` | Boolean | `True` `False` | Whether or not to redraw what is already being displayed on the LED matrix. Defaults to `True`
+
+Returned type | Explanation
+--- | --- 
+None | 
 
 ```python
 from astro_pi import AstroPi
@@ -39,9 +42,13 @@ ap.set_rotation(180)
 
 Flips the image on the LED matrix horizontally.
 
-Parameter | Valid values | Explanation
---- | --- | ---
-`redraw` | `True` `False` | Whether or not to redraw what is already being displayed on the LED matrix. Defaults to `True`
+Parameter | Type | Valid values | Explanation
+--- | --- | --- | ---
+`redraw` | Boolean | `True` `False` | Whether or not to redraw what is already being displayed on the LED matrix. Defaults to `True`
+
+Returned type | Explanation
+--- | --- 
+List | A list containing 64 smaller lists of `[R, G, B]` pixels (red, green, blue) representing the flipped image.
 
 ```python
 from astro_pi import AstroPi
@@ -54,9 +61,13 @@ ap.flip_h()
 
 Flips the image on the LED matrix vertically.
 
-Parameter | Valid values | Explanation
---- | --- | ---
-`redraw` | `True` `False` | Whether or not to redraw what is already being displayed on the LED matrix. Defaults to `True`
+Parameter | Type | Valid values | Explanation
+--- | --- | --- | ---
+`redraw` | Boolean | `True` `False` | Whether or not to redraw what is already being displayed on the LED matrix when flipped. Defaults to `True`
+
+Returned type | Explanation
+--- | --- 
+List | A list containing 64 smaller lists of `[R, G, B]` pixels (red, green, blue) representing the flipped image.
 
 ```python
 from astro_pi import AstroPi
@@ -69,9 +80,13 @@ ap.flip_v()
 
 Updates the entire LED matrix based on a 64 length list of pixel values.
 
-Parameter | Valid values | Explanation
---- | --- | ---
-`pixel_list` | `[[R, G, B] * 64]` | A list containing 64 smaller lists of `[R, G, B]` pixels (red, green, blue). Each R-G-B element must be an integer between 0 and 255.
+Parameter | Type | Valid values | Explanation
+--- | --- | --- | ---
+`pixel_list` | List | `[[R, G, B] * 64]` | A list containing 64 smaller lists of `[R, G, B]` pixels (red, green, blue). Each R-G-B element must be an integer between 0 and 255.
+
+Returned type | Explanation
+--- | --- 
+None | 
 
 ```python
 from astro_pi import AstroPi
@@ -97,9 +112,9 @@ ap.set_pixels(question_mark)
 
 #### get_pixels
 
-Returns a 64 length list of pixel values representing what is currently displayed on the LED matrix.
-
-The returned list will contain 64 smaller lists of `[R, G, B]` pixels (red, green, blue). Each R-G-B element will be an integer between 0 and 255.
+Returned type | Explanation
+--- | --- 
+List | A list containing 64 smaller lists of `[R, G, B]` pixels (red, green, blue) representing the currently displayed image.
 
 ```python
 from astro_pi import AstroPi
@@ -116,11 +131,15 @@ The `get_pixels` function provides a correct representation of how the pixels en
 
 Sets an individual LED matrix pixel at the specified X-Y coordinate to the specified colour.
 
-Parameter | Valid values | Explanation
---- | --- | ---
-`x` | `0 - 7` | 0 is on the left, 7 on the right.
-`y` | `0 - 7` | 0 is at the top, 7 at the bottom.
-`pix` | `[R, G, B]` | A list containing the R-G-B (red, green, blue) colour the pixel should be set to. Each R-G-B element must be an integer between 0 and 255.
+Parameter | Type | Valid values | Explanation
+--- | --- | --- | ---
+`x` | Integer | `0 - 7` | 0 is on the left, 7 on the right.
+`y` | Integer |  `0 - 7` | 0 is at the top, 7 at the bottom.
+`pix` | List |  `[R, G, B]` | A list containing the R-G-B (red, green, blue) colour the pixel should be set to. Each R-G-B element must be an integer between 0 and 255.
+
+Returned type | Explanation
+--- | --- 
+None | 
 
 ```python
 from astro_pi import AstroPi
@@ -134,12 +153,14 @@ ap.set_pixel_xy(7, 7, [255, 0, 255])
 
 #### get_pixel_xy
 
-Returns a list of `[R, G, B]` representing the colour of an individual LED matrix pixel at the specified X-Y coordinate.
+Parameter | Type | Valid values | Explanation
+--- | --- | --- | ---
+`x` | Integer |  `0 - 7` | 0 is on the left, 7 on the right.
+`y` | Integer |  `0 - 7` | 0 is at the top, 7 at the bottom.
 
-Parameter | Valid values | Explanation
---- | --- | ---
-`x` | `0 - 7` | 0 is on the left, 7 on the right.
-`y` | `0 - 7` | 0 is at the top, 7 at the bottom.
+Returned type | Explanation
+--- | --- 
+List | Returns a list of `[R, G, B]` representing the colour of an individual LED matrix pixel at the specified X-Y coordinate.
 
 ```python
 from astro_pi import AstroPi
@@ -154,10 +175,10 @@ Note: Please read the note under `get_pixels`
 
 Loads an image file, converts it to RGB format and displays it on the LED matrix. The image must be 8 x 8 pixels in size.
 
-Parameter | Valid values | Explanation
---- | --- | ---
-`file_path` | `String` | The file system path to the image file to load.
-`redraw` | `True` `False` | Whether or not to redraw the loaded image file on the LED matrix. Defaults to `True`
+Parameter | Type | Valid values | Explanation
+--- | --- | --- | ---
+`file_path` | String | Any valid file path. | The file system path to the image file to load.
+`redraw` | Boolean | `True` `False` | Whether or not to redraw the loaded image file on the LED matrix. Defaults to `True`
 
 ```python
 from astro_pi import AstroPi
@@ -166,7 +187,9 @@ ap = AstroPi()
 ap.load_image("space_invader.png")
 ```
 
-The function also returns a pixel list representing the image converted into RGB format if further manipulation is desired.
+Returned type | Explanation
+--- | --- 
+List | A list containing 64 smaller lists of `[R, G, B]` pixels (red, green, blue) representing the loaded image after RGB conversion.
 
 ```python
 from astro_pi import AstroPi
@@ -179,9 +202,13 @@ invader_pixels = ap.load_image("space_invader.png", redraw=False)
 
 Sets the entire LED matrix to a single colour, defaults to blank / off.
 
-Parameter | Valid values | Explanation
---- | --- | ---
-`colour` | `[R, G, B]` | A list containing the R-G-B (red, green, blue) colour. Each R-G-B element must be an integer between 0 and 255. Defaults to `[0, 0, 0]`
+Parameter | Type | Valid values | Explanation
+--- | --- | --- | ---
+`colour` | List | `[R, G, B]` | A list containing the R-G-B (red, green, blue) colour. Each R-G-B element must be an integer between 0 and 255. Defaults to `[0, 0, 0]`
+
+Returned type | Explanation
+--- | --- 
+None | 
 
 ```python
 import time
@@ -197,12 +224,16 @@ ap.clear()
 
 Scrolls a text message from right to left across the LED matrix and at the specified speed, in the specified colour and background colour.
 
-Parameter | Valid values | Explanation
---- | --- | ---
-`text_string` | `String` | The message to scroll. 
-`scroll_speed` | `Float` | The speed at which the text should scroll. This value represents the time paused for between shifting the text to the left by one column of pixels. Defaults to `0.1`
-`text_colour` | `[R, G, B]` | A list containing the R-G-B (red, green, blue) colour of the text. Each R-G-B element must be an integer between 0 and 255. Defaults to `[255, 255, 255]` white.
-`back_colour` | `[R, G, B]` | A list containing the R-G-B (red, green, blue) colour of the background. Each R-G-B element must be an integer between 0 and 255. Defaults to `[0, 0, 0]` black / off.
+Parameter | Type | Valid values | Explanation
+--- | --- | --- | ---
+`text_string` | String | Any text string. | The message to scroll. 
+`scroll_speed` | Float | Any floating point number. | The speed at which the text should scroll. This value represents the time paused for between shifting the text to the left by one column of pixels. Defaults to `0.1`
+`text_colour` | List | `[R, G, B]` | A list containing the R-G-B (red, green, blue) colour of the text. Each R-G-B element must be an integer between 0 and 255. Defaults to `[255, 255, 255]` white.
+`back_colour` | List | `[R, G, B]` | A list containing the R-G-B (red, green, blue) colour of the background. Each R-G-B element must be an integer between 0 and 255. Defaults to `[0, 0, 0]` black / off.
+
+Returned type | Explanation
+--- | --- 
+None | 
 
 ```python
 from astro_pi import AstroPi
@@ -215,11 +246,15 @@ ap.show_message("One small step for Pi!", text_colour=[255, 0, 0])
 
 Displays a single text character on the LED matrix.
 
-Parameter | Valid values | Explanation
---- | --- | ---
-`s` | `String` | The letter to show, must be a string of length 1.
-`text_colour` | `[R, G, B]` | A list containing the R-G-B (red, green, blue) colour of the letter. Each R-G-B element must be an integer between 0 and 255. Defaults to `[255, 255, 255]` white.
-`back_colour` | `[R, G, B]` | A list containing the R-G-B (red, green, blue) colour of the background. Each R-G-B element must be an integer between 0 and 255. Defaults to `[0, 0, 0]` black / off.
+Parameter | Type | Valid values | Explanation
+--- | --- | --- | ---
+`s` | String | A text string of length 1. | The letter to show.
+`text_colour` | List | `[R, G, B]` | A list containing the R-G-B (red, green, blue) colour of the letter. Each R-G-B element must be an integer between 0 and 255. Defaults to `[255, 255, 255]` white.
+`back_colour` | List | `[R, G, B]` | A list containing the R-G-B (red, green, blue) colour of the background. Each R-G-B element must be an integer between 0 and 255. Defaults to `[0, 0, 0]` black / off.
+
+Returned type | Explanation
+--- | --- 
+None | 
 
 ```python
 import time
@@ -236,7 +271,11 @@ for i in reversed(range(0,10)):
 
 #### get_humidity
 
-Gets the percentage of relative humidity, the value returned will be a Float.
+Gets the percentage of relative humidity from the humidity sensor.
+
+Returned type | Explanation
+--- | --- 
+Float | The percentage of relative humidity.
 
 ```python
 from astro_pi import AstroPi
@@ -245,4 +284,220 @@ ap = AstroPi()
 humidity = ap.get_humidity()
 ```
 
+#### get_temperature
+
+Calls `get_temperature_from_humidity` below.
+
+```python
+from astro_pi import AstroPi
+
+ap = AstroPi()
+temp = ap.get_temperature()
+```
+
+#### get_temperature_from_humidity
+
+Gets the current temperature in degrees Celsius from the humidity sensor.
+
+Returned type | Explanation
+--- | --- 
+Float | The current temperature in degrees Celsius.
+
+```python
+from astro_pi import AstroPi
+
+ap = AstroPi()
+temp = ap.get_temperature_from_humidity()
+```
+
+#### get_temperature_from_pressure
+
+Gets the current temperature in degrees Celsius from the pressure sensor.
+
+Returned type | Explanation
+--- | --- 
+Float | The current temperature in degrees Celsius.
+
+```python
+from astro_pi import AstroPi
+
+ap = AstroPi()
+temp = ap.get_temperature_from_pressure()
+```
+
+#### get_pressure
+
+Gets the current pressure in Millibars from the pressure sensor.
+
+Returned type | Explanation
+--- | --- 
+Float | The current pressure in Millibars.
+
+```python
+from astro_pi import AstroPi
+
+ap = AstroPi()
+pressure = ap.get_pressure()
+```
+
 ### IMU Sensor
+
+The IMU (inertial measurement unit) sensor is a combination of three sensors, each with an x, y and z axis. For this reason it's considered be a 9 dof (degrees of freedom) sensor.
+
+- Gyroscope
+- Accelerometer
+- Magnetometer (compass)
+
+This API allows you to use these sensors in any combination to measure orientation or as individual sensors in their own right.
+
+#### set_imu_config
+
+Enables and disables the gyroscope, accelerometer and/or magnetometer contribution to the get orientation functions below.
+
+Parameter | Type | Valid values | Explanation
+--- | --- | --- | ---
+`compass_enabled` | Boolean | `True` `False` | Whether or not the compass should be enabled.
+`gyro_enabled` | Boolean | `True` `False` | Whether or not the gyroscope should be enabled.
+`accel_enabled` | Boolean | `True` `False` | Whether or not the accelerometer should be enabled.
+
+Returned type | Explanation
+--- | --- 
+None | 
+
+```python
+from astro_pi import AstroPi
+
+ap = AstroPi()
+ap.set_imu_config(False, True, False)  # gyroscope only
+```
+
+#### get_orientation_radians
+
+Gets the current orientation in radians using the aircraft principal axes of pitch, roll and yaw.
+
+Returned type | Explanation
+--- | --- 
+Dictionary | A dictionary object indexed by the strings `pitch`, `roll` and `yaw`. The values are Floats representing the angle of the axis in radians.
+
+```python
+from astro_pi import AstroPi
+
+ap = AstroPi()
+orientation_rad = ap.get_orientation_radians()
+```
+
+#### get_orientation_degrees
+
+Gets the current orientation in degrees using the aircraft principal axes of pitch, roll and yaw.
+
+Returned type | Explanation
+--- | --- 
+Dictionary | A dictionary object indexed by the strings `pitch`, `roll` and `yaw`. The values are Floats representing the angle of the axis in degrees.
+
+```python
+from astro_pi import AstroPi
+
+ap = AstroPi()
+orientation = ap.get_orientation_degrees()
+```
+
+#### get_orientation
+
+Calls `get_orientation_degrees` above.
+
+```python
+from astro_pi import AstroPi
+
+ap = AstroPi()
+orientation = ap.get_orientation()
+```
+
+#### get_compass
+
+Calls `set_imu_config` to disable the gyroscope and accelerometer then gets the direction of North from the magnetometer in degrees.
+
+Returned type | Explanation
+--- | --- 
+Float | The direction of North.
+
+```python
+from astro_pi import AstroPi
+
+ap = AstroPi()
+north = ap.get_compass()
+```
+
+#### get_compass_raw
+
+Gets the raw x, y and z axis magnetometer data.
+
+Returned type | Explanation
+--- | --- 
+Dictionary | A dictionary object indexed by the strings `x`, `y` and `z`. The values are Floats representing the magnetic intensity of the axis in **teslas**.
+
+```python
+from astro_pi import AstroPi
+
+ap = AstroPi()
+raw = ap.get_compass_raw()
+```
+
+#### get_gyroscope
+
+Calls `set_imu_config` to disable the magnetometer and accelerometer then gets the current orientation from the gyroscope only.
+
+Returned type | Explanation
+--- | --- 
+Dictionary | A dictionary object indexed by the strings `pitch`, `roll` and `yaw`. The values are Floats representing the angle of the axis in degrees.
+
+```python
+from astro_pi import AstroPi
+
+ap = AstroPi()
+gyro_only = ap.get_gyroscope()
+```
+
+#### get_gyroscope_raw
+
+Gets the raw x, y and z axis gyroscope data.
+
+Returned type | Explanation
+--- | --- 
+Dictionary | A dictionary object indexed by the strings `x`, `y` and `z`. The values are Floats representing the rotational intensity of the axis in **radians per second**.
+
+```python
+from astro_pi import AstroPi
+
+ap = AstroPi()
+raw = ap.get_gyroscope_raw()
+```
+
+#### get_accelerometer
+
+Calls `set_imu_config` to disable the magnetometer and gyroscope then gets the current orientation from the accelerometer only.
+
+Returned type | Explanation
+--- | --- 
+Dictionary | A dictionary object indexed by the strings `pitch`, `roll` and `yaw`. The values are Floats representing the angle of the axis in degrees.
+
+```python
+from astro_pi import AstroPi
+
+ap = AstroPi()
+accel_only = ap.get_accelerometer()
+```
+
+#### get_accelerometer_raw
+
+Gets the raw x, y and z axis accelerometer data.
+
+Returned type | Explanation
+--- | --- 
+Dictionary | A dictionary object indexed by the strings `x`, `y` and `z`. The values are Floats representing the acceleration intensity of the axis in **Gs**.
+
+```python
+from astro_pi import AstroPi
+
+ap = AstroPi()
+raw = ap.get_accelerometer_raw()
+```
