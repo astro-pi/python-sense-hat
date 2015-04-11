@@ -13,7 +13,6 @@ prev_y = 0
 
 while True:
     dir = ap.get_compass()
-    print dir
     edge_index = int((len(edge_loop) / 360.0) * dir)
     offset = edge_loop[edge_index]
 
