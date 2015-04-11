@@ -208,7 +208,7 @@ class AstroPi(object):
             map = self._pix_map[self._rotation]
             for index, pix in enumerate(pixel_list):
                 # Two bytes per pixel in fb memory, 16 bit RGB565
-                f.seek(map[index // 8][index % 8] * 2)
+                f.seek(map[index // 8][index % 8] * 2)  # row, column
                 f.write(self._pack_bin(pix))
 
     def get_pixels(self):
@@ -223,7 +223,7 @@ class AstroPi(object):
             for row in range(8):
                 for col in range(8):
                     # Two bytes per pixel in fb memory, 16 bit RGB565
-                    f.seek(map[row][col] * 2)
+                    f.seek(map[row][col] * 2)  # row, column
                     pixel_list.append(self._unpack_bin(f.read(2)))
         return pixel_list
 
@@ -249,7 +249,7 @@ class AstroPi(object):
         with open(self._fb_device, 'wb') as f:
             map = self._pix_map[self._rotation]
             # Two bytes per pixel in fb memory, 16 bit RGB565
-            f.seek(map[x][y] * 2)
+            f.seek(map[y][x] * 2)  # row, column
             f.write(self._pack_bin(pix))
 
     def get_pixel_xy(self, x, y):
@@ -269,7 +269,7 @@ class AstroPi(object):
         with open(self._fb_device, 'rb') as f:
             map = self._pix_map[self._rotation]
             # Two bytes per pixel in fb memory, 16 bit RGB565
-            f.seek(map[x][y] * 2)
+            f.seek(map[y][x] * 2)  # row, column
             pix = self._unpack_bin(f.read(2))
 
         return pix
