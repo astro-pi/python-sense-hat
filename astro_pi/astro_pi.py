@@ -5,7 +5,7 @@ import sys
 import math
 import time
 import numpy as np
-import RTIMU # custom version
+import RTIMU  # custom version
 from PIL import Image  # pillow
 
 
