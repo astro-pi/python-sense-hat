@@ -25,7 +25,8 @@ setup(
     package_data={"txt": ['astro_pi_text.txt'], "png": ['astro_pi_text.png']},
     include_package_data=True,
     install_requires=[
-        "RPi.GPIO",
+        "pillow",
+        "numpy"
     ],
     long_description=read('README.rst'),
     classifiers=[
