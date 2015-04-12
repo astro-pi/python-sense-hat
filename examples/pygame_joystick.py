@@ -24,9 +24,9 @@ RIGHT_PIXELS = [[7, 3], [7, 4]]
 CENTRE_PIXELS = [[3, 3], [4, 3], [3, 4], [4, 4]]
 
 
-def set_pixels(pixels, colour):
+def set_pixels(pixels, col):
     for p in pixels:
-        ap.set_pixel_xy(p[0], p[1], colour)
+        ap.set_pixel(p[0], p[1], col[0], col[1], col[2])
 
 
 def handle_event(event, colour):

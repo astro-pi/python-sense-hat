@@ -21,10 +21,10 @@ ap = AstroPi()
 
 ap.set_pixels(question_mark)
 
-ap.set_pixel_xy(0, 0, [255, 0, 0])
-ap.set_pixel_xy(0, 7, [0, 255, 0])
-ap.set_pixel_xy(7, 0, [0, 0, 255])
-ap.set_pixel_xy(7, 7, [255, 0, 255])
+ap.set_pixel(0, 0, 255, 0, 0)
+ap.set_pixel(0, 7, 0, 255, 0)
+ap.set_pixel(7, 0, 0, 0, 255)
+ap.set_pixel(7, 7, 255, 0, 255)
 
 while True:
     for r in [0, 90, 180, 270]:

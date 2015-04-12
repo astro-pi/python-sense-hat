@@ -18,9 +18,6 @@ prev_y = 0
 
 led_degree_ratio = len(led_loop) / 360.0
 
-ON = [0, 0, 255]  # Blue
-OFF = [0, 0, 0]
-
 while True:
     dir = ap.get_compass()
     dir_inverted = 360 - dir  # So LED appears to follow North
@@ -31,9 +28,9 @@ while True:
     x = offset % 8  # column
 
     if x != prev_x or y != prev_y:
-        ap.set_pixel_xy(prev_x, prev_y, OFF)
+        ap.set_pixel(prev_x, prev_y, 0, 0, 0)
 
-    ap.set_pixel_xy(x, y, ON)
+    ap.set_pixel(x, y, 0, 0, 255)
 
     prev_x = x
     prev_y = y
