@@ -341,3 +341,163 @@ pressure = ap.get_pressure()
 ```
 
 ### IMU Sensor
+
+The IMU (inertial measurement unit) sensor is a combination of three sensors, each with an x, y and z axis. For this reason it's considered be a 9 dof (degrees of freedom) sensor.
+
+- Gyroscope
+- Accelerometer
+- Magnetometer (compass)
+
+This API allows you to use these sensors in any combination to measure orientation or as individual sensors in their own right.
+
+#### set_imu_config
+
+Enables and disables the gyroscope, accelerometer and/or magnetometer contribution to the get orientation functions below.
+
+Parameter | Type | Valid values | Explanation
+--- | --- | --- | ---
+`compass_enabled` | Boolean | `True` `False` | Whether or not the compass should be enabled.
+`gyro_enabled` | Boolean | `True` `False` | Whether or not the gyroscope should be enabled.
+`accel_enabled` | Boolean | `True` `False` | Whether or not the accelerometer should be enabled.
+
+Returned type | Explanation
+--- | --- 
+None | 
+
+```python
+from astro_pi import AstroPi
+
+ap = AstroPi()
+ap.set_imu_config(False, True, False)  # gyroscope only
+```
+
+#### get_orientation_radians
+
+Gets the current orientation in radians using the aircraft principal axes of pitch, roll and yaw.
+
+Returned type | Explanation
+--- | --- 
+Dictionary | A dictionary object indexed by the strings `pitch`, `roll` and `yaw`. The values are Floats representing the angle of the axis in radians.
+
+```python
+from astro_pi import AstroPi
+
+ap = AstroPi()
+orientation_rad = ap.get_orientation_radians()
+```
+
+#### get_orientation_degrees
+
+Gets the current orientation in degrees using the aircraft principal axes of pitch, roll and yaw.
+
+Returned type | Explanation
+--- | --- 
+Dictionary | A dictionary object indexed by the strings `pitch`, `roll` and `yaw`. The values are Floats representing the angle of the axis in degrees.
+
+```python
+from astro_pi import AstroPi
+
+ap = AstroPi()
+orientation = ap.get_orientation_degrees()
+```
+
+#### get_orientation
+
+Calls `get_orientation_degrees` above.
+
+```python
+from astro_pi import AstroPi
+
+ap = AstroPi()
+orientation = ap.get_orientation()
+```
+
+#### get_compass
+
+Calls `set_imu_config` to disable the gyroscope and accelerometer then gets the direction of North from the magnetometer in degrees.
+
+Returned type | Explanation
+--- | --- 
+Float | The direction of North.
+
+```python
+from astro_pi import AstroPi
+
+ap = AstroPi()
+north = ap.get_compass()
+```
+
+#### get_compass_raw
+
+Gets the raw x, y and z axis magnetometer data.
+
+Returned type | Explanation
+--- | --- 
+Dictionary | A dictionary object indexed by the strings `x`, `y` and `z`. The values are Floats representing the magnetic intensity of the axis in **teslas**.
+
+```python
+from astro_pi import AstroPi
+
+ap = AstroPi()
+raw = ap.get_compass_raw()
+```
+
+#### get_gyroscope
+
+Calls `set_imu_config` to disable the magnetometer and accelerometer then gets the current orientation from the gyroscope only.
+
+Returned type | Explanation
+--- | --- 
+Dictionary | A dictionary object indexed by the strings `pitch`, `roll` and `yaw`. The values are Floats representing the angle of the axis in degrees.
+
+```python
+from astro_pi import AstroPi
+
+ap = AstroPi()
+gyro_only = ap.get_gyroscope()
+```
+
+#### get_gyroscope_raw
+
+Gets the raw x, y and z axis gyroscope data.
+
+Returned type | Explanation
+--- | --- 
+Dictionary | A dictionary object indexed by the strings `x`, `y` and `z`. The values are Floats representing the rotational intensity of the axis in **radians per second**.
+
+```python
+from astro_pi import AstroPi
+
+ap = AstroPi()
+raw = ap.get_gyroscope_raw()
+```
+
+#### get_accelerometer
+
+Calls `set_imu_config` to disable the magnetometer and gyroscope then gets the current orientation from the accelerometer only.
+
+Returned type | Explanation
+--- | --- 
+Dictionary | A dictionary object indexed by the strings `pitch`, `roll` and `yaw`. The values are Floats representing the angle of the axis in degrees.
+
+```python
+from astro_pi import AstroPi
+
+ap = AstroPi()
+accel_only = ap.get_accelerometer()
+```
+
+#### get_accelerometer_raw
+
+Gets the raw x, y and z axis accelerometer data.
+
+Returned type | Explanation
+--- | --- 
+Dictionary | A dictionary object indexed by the strings `x`, `y` and `z`. The values are Floats representing the acceleration intensity of the axis in **Gs**.
+
+```python
+from astro_pi import AstroPi
+
+ap = AstroPi()
+raw = ap.get_accelerometer_raw()
+```
