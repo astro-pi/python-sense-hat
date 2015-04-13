@@ -23,10 +23,10 @@ ap = AstroPi()
 
 If you're using the Pi upside down or sideways you can use this function to correct the orientation of the image being shown.
 
-Parameter | Valid values | Explanation
---- | --- | ---
-`r` | `0` `90` `180` `270` | The angle to rotate the LED matrix though. `0` is with the Raspberry Pi HDMI port facing downwards.
-`redraw` | `True` `False` | Whether or not to redraw what is already being displayed on the LED matrix. Defaults to `True`
+Parameter | Type | Valid values | Explanation
+--- | --- | --- | ---
+`r` | Integer | `0` `90` `180` `270` | The angle to rotate the LED matrix though. `0` is with the Raspberry Pi HDMI port facing downwards.
+`redraw` | Boolean | `True` `False` | Whether or not to redraw what is already being displayed on the LED matrix. Defaults to `True`
 
 ```python
 from astro_pi import AstroPi
@@ -39,9 +39,9 @@ ap.set_rotation(180)
 
 Flips the image on the LED matrix horizontally.
 
-Parameter | Valid values | Explanation
---- | --- | ---
-`redraw` | `True` `False` | Whether or not to redraw what is already being displayed on the LED matrix. Defaults to `True`
+Parameter | Type | Valid values | Explanation
+--- | --- | --- | ---
+`redraw` | Boolean | `True` `False` | Whether or not to redraw what is already being displayed on the LED matrix. Defaults to `True`
 
 ```python
 from astro_pi import AstroPi
@@ -54,9 +54,9 @@ ap.flip_h()
 
 Flips the image on the LED matrix vertically.
 
-Parameter | Valid values | Explanation
---- | --- | ---
-`redraw` | `True` `False` | Whether or not to redraw what is already being displayed on the LED matrix. Defaults to `True`
+Parameter | Type | Valid values | Explanation
+--- | --- | --- | ---
+`redraw` | Boolean | `True` `False` | Whether or not to redraw what is already being displayed on the LED matrix. Defaults to `True`
 
 ```python
 from astro_pi import AstroPi
@@ -69,9 +69,9 @@ ap.flip_v()
 
 Updates the entire LED matrix based on a 64 length list of pixel values.
 
-Parameter | Valid values | Explanation
---- | --- | ---
-`pixel_list` | `[[R, G, B] * 64]` | A list containing 64 smaller lists of `[R, G, B]` pixels (red, green, blue). Each R-G-B element must be an integer between 0 and 255.
+Parameter | Type | Valid values | Explanation
+--- | --- | --- | ---
+`pixel_list` | List | `[[R, G, B] * 64]` | A list containing 64 smaller lists of `[R, G, B]` pixels (red, green, blue). Each R-G-B element must be an integer between 0 and 255.
 
 ```python
 from astro_pi import AstroPi
@@ -116,11 +116,11 @@ The `get_pixels` function provides a correct representation of how the pixels en
 
 Sets an individual LED matrix pixel at the specified X-Y coordinate to the specified colour.
 
-Parameter | Valid values | Explanation
---- | --- | ---
-`x` | `0 - 7` | 0 is on the left, 7 on the right.
-`y` | `0 - 7` | 0 is at the top, 7 at the bottom.
-`pix` | `[R, G, B]` | A list containing the R-G-B (red, green, blue) colour the pixel should be set to. Each R-G-B element must be an integer between 0 and 255.
+Parameter | Type | Valid values | Explanation
+--- | --- | --- | ---
+`x` | Integer | `0 - 7` | 0 is on the left, 7 on the right.
+`y` | Integer |  `0 - 7` | 0 is at the top, 7 at the bottom.
+`pix` | List |  `[R, G, B]` | A list containing the R-G-B (red, green, blue) colour the pixel should be set to. Each R-G-B element must be an integer between 0 and 255.
 
 ```python
 from astro_pi import AstroPi
@@ -136,10 +136,10 @@ ap.set_pixel_xy(7, 7, [255, 0, 255])
 
 Returns a list of `[R, G, B]` representing the colour of an individual LED matrix pixel at the specified X-Y coordinate.
 
-Parameter | Valid values | Explanation
---- | --- | ---
-`x` | `0 - 7` | 0 is on the left, 7 on the right.
-`y` | `0 - 7` | 0 is at the top, 7 at the bottom.
+Parameter | Type | Valid values | Explanation
+--- | --- | --- | ---
+`x` | Integer |  `0 - 7` | 0 is on the left, 7 on the right.
+`y` | Integer |  `0 - 7` | 0 is at the top, 7 at the bottom.
 
 ```python
 from astro_pi import AstroPi
@@ -154,10 +154,10 @@ Note: Please read the note under `get_pixels`
 
 Loads an image file, converts it to RGB format and displays it on the LED matrix. The image must be 8 x 8 pixels in size.
 
-Parameter | Valid values | Explanation
---- | --- | ---
-`file_path` | `String` | The file system path to the image file to load.
-`redraw` | `True` `False` | Whether or not to redraw the loaded image file on the LED matrix. Defaults to `True`
+Parameter | Type | Valid values | Explanation
+--- | --- | --- | ---
+`file_path` | String | Any valid file path. | The file system path to the image file to load.
+`redraw` | Boolean | `True` `False` | Whether or not to redraw the loaded image file on the LED matrix. Defaults to `True`
 
 ```python
 from astro_pi import AstroPi
@@ -179,9 +179,9 @@ invader_pixels = ap.load_image("space_invader.png", redraw=False)
 
 Sets the entire LED matrix to a single colour, defaults to blank / off.
 
-Parameter | Valid values | Explanation
---- | --- | ---
-`colour` | `[R, G, B]` | A list containing the R-G-B (red, green, blue) colour. Each R-G-B element must be an integer between 0 and 255. Defaults to `[0, 0, 0]`
+Parameter | Type | Valid values | Explanation
+--- | --- | --- | ---
+`colour` | List | `[R, G, B]` | A list containing the R-G-B (red, green, blue) colour. Each R-G-B element must be an integer between 0 and 255. Defaults to `[0, 0, 0]`
 
 ```python
 import time
@@ -197,12 +197,12 @@ ap.clear()
 
 Scrolls a text message from right to left across the LED matrix and at the specified speed, in the specified colour and background colour.
 
-Parameter | Valid values | Explanation
---- | --- | ---
-`text_string` | `String` | The message to scroll. 
-`scroll_speed` | `Float` | The speed at which the text should scroll. This value represents the time paused for between shifting the text to the left by one column of pixels. Defaults to `0.1`
-`text_colour` | `[R, G, B]` | A list containing the R-G-B (red, green, blue) colour of the text. Each R-G-B element must be an integer between 0 and 255. Defaults to `[255, 255, 255]` white.
-`back_colour` | `[R, G, B]` | A list containing the R-G-B (red, green, blue) colour of the background. Each R-G-B element must be an integer between 0 and 255. Defaults to `[0, 0, 0]` black / off.
+Parameter | Type | Valid values | Explanation
+--- | --- | --- | ---
+`text_string` | String | Any text string. | The message to scroll. 
+`scroll_speed` | Float | Any floating point number. | The speed at which the text should scroll. This value represents the time paused for between shifting the text to the left by one column of pixels. Defaults to `0.1`
+`text_colour` | List | `[R, G, B]` | A list containing the R-G-B (red, green, blue) colour of the text. Each R-G-B element must be an integer between 0 and 255. Defaults to `[255, 255, 255]` white.
+`back_colour` | List | `[R, G, B]` | A list containing the R-G-B (red, green, blue) colour of the background. Each R-G-B element must be an integer between 0 and 255. Defaults to `[0, 0, 0]` black / off.
 
 ```python
 from astro_pi import AstroPi
@@ -215,11 +215,11 @@ ap.show_message("One small step for Pi!", text_colour=[255, 0, 0])
 
 Displays a single text character on the LED matrix.
 
-Parameter | Valid values | Explanation
---- | --- | ---
-`s` | `String` | The letter to show, must be a string of length 1.
-`text_colour` | `[R, G, B]` | A list containing the R-G-B (red, green, blue) colour of the letter. Each R-G-B element must be an integer between 0 and 255. Defaults to `[255, 255, 255]` white.
-`back_colour` | `[R, G, B]` | A list containing the R-G-B (red, green, blue) colour of the background. Each R-G-B element must be an integer between 0 and 255. Defaults to `[0, 0, 0]` black / off.
+Parameter | Type | Valid values | Explanation
+--- | --- | --- | ---
+`s` | String | A text string of length 1. | The letter to show.
+`text_colour` | List | `[R, G, B]` | A list containing the R-G-B (red, green, blue) colour of the letter. Each R-G-B element must be an integer between 0 and 255. Defaults to `[255, 255, 255]` white.
+`back_colour` | List | `[R, G, B]` | A list containing the R-G-B (red, green, blue) colour of the background. Each R-G-B element must be an integer between 0 and 255. Defaults to `[0, 0, 0]` black / off.
 
 ```python
 import time
