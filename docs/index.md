@@ -271,13 +271,73 @@ for i in reversed(range(0,10)):
 
 #### get_humidity
 
-Gets the percentage of relative humidity, the value returned will be a Float.
+Gets the percentage of relative humidity from the humidity sensor.
+
+Returned type | Explanation
+--- | --- 
+Float | The percentage of relative humidity.
 
 ```python
 from astro_pi import AstroPi
 
 ap = AstroPi()
 humidity = ap.get_humidity()
+```
+
+#### get_temperature
+
+Calls `get_temperature_from_humidity` below.
+
+```python
+from astro_pi import AstroPi
+
+ap = AstroPi()
+temp = ap.get_temperature()
+```
+
+#### get_temperature_from_humidity
+
+Gets the current temperature in degrees Celsius from the humidity sensor.
+
+Returned type | Explanation
+--- | --- 
+Float | The current temperature in degrees Celsius.
+
+```python
+from astro_pi import AstroPi
+
+ap = AstroPi()
+temp = ap.get_temperature_from_humidity()
+```
+
+#### get_temperature_from_pressure
+
+Gets the current temperature in degrees Celsius from the pressure sensor.
+
+Returned type | Explanation
+--- | --- 
+Float | The current temperature in degrees Celsius.
+
+```python
+from astro_pi import AstroPi
+
+ap = AstroPi()
+temp = ap.get_temperature_from_pressure()
+```
+
+#### get_pressure
+
+Gets the current pressure in Millibars from the pressure sensor.
+
+Returned type | Explanation
+--- | --- 
+Float | The current pressure in Millibars.
+
+```python
+from astro_pi import AstroPi
+
+ap = AstroPi()
+pressure = ap.get_pressure()
 ```
 
 ### IMU Sensor
