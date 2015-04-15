@@ -127,7 +127,7 @@ Note: You will notice that the pixel values you pass into `set_pixels` sometimes
 
 The `get_pixels` function provides a correct representation of how the pixels end up in frame buffer memory after you've called `set_pixels`.
 - - -
-#### set_pixel_xy
+#### set_pixel
 
 Sets an individual LED matrix pixel at the specified X-Y coordinate to the specified colour.
 
@@ -135,7 +135,9 @@ Parameter | Type | Valid values | Explanation
 --- | --- | --- | ---
 `x` | Integer | `0 - 7` | 0 is on the left, 7 on the right.
 `y` | Integer |  `0 - 7` | 0 is at the top, 7 at the bottom.
-`pix` | List |  `[R, G, B]` | A list containing the R-G-B (red, green, blue) colour the pixel should be set to. Each R-G-B element must be an integer between 0 and 255.
+`r` | Integer |  `0 - 255` | The Red element of the pixel.
+`g` | Integer |  `0 - 255` | The Green element of the pixel.
+`b` | Integer |  `0 - 255` | The Blue element of the pixel.
 
 Returned type | Explanation
 --- | --- 
@@ -145,13 +147,13 @@ None |
 from astro_pi import AstroPi
 
 ap = AstroPi()
-ap.set_pixel_xy(0, 0, [255, 0, 0])
-ap.set_pixel_xy(0, 7, [0, 255, 0])
-ap.set_pixel_xy(7, 0, [0, 0, 255])
-ap.set_pixel_xy(7, 7, [255, 0, 255])
+ap.set_pixel(0, 0, 255, 0, 0)
+ap.set_pixel(0, 7, 0, 255, 0)
+ap.set_pixel(7, 0, 0, 0, 255)
+ap.set_pixel(7, 7, 255, 0, 255)
 ```
 - - -
-#### get_pixel_xy
+#### get_pixel
 
 Parameter | Type | Valid values | Explanation
 --- | --- | --- | ---
@@ -166,7 +168,7 @@ List | Returns a list of `[R, G, B]` representing the colour of an individual LE
 from astro_pi import AstroPi
 
 ap = AstroPi()
-top_left_pixel = ap.get_pixel_xy(0, 0)
+top_left_pixel = ap.get_pixel(0, 0)
 ```
 
 Note: Please read the note under `get_pixels`
