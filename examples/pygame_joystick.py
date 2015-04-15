@@ -17,11 +17,11 @@ ap.clear()  # Blank the LED matrix
 
 # 0, 0 = Top left
 # 7, 7 = Bottom right
-UP_PIXELS = [[0, 3], [0, 4]]
-DOWN_PIXELS = [[7, 3], [7, 4]]
-LEFT_PIXELS = [[3, 0], [4, 0]]
-RIGHT_PIXELS = [[3, 7], [4, 7]]
-CENTRE_PIXELS = [[3, 3], [3, 4], [4, 3], [4, 4]]
+UP_PIXELS = [[3, 0], [4, 0]]
+DOWN_PIXELS = [[3, 7], [4, 7]]
+LEFT_PIXELS = [[0, 3], [0, 4]]
+RIGHT_PIXELS = [[7, 3], [7, 4]]
+CENTRE_PIXELS = [[3, 3], [4, 3], [3, 4], [4, 4]]
 
 
 def set_pixels(pixels, colour):
