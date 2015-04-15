@@ -282,6 +282,7 @@ from astro_pi import AstroPi
 
 ap = AstroPi()
 humidity = ap.get_humidity()
+print("Humidity: %s %%rH" % humidity)
 ```
 - - -
 #### get_temperature
@@ -293,6 +294,7 @@ from astro_pi import AstroPi
 
 ap = AstroPi()
 temp = ap.get_temperature()
+print("Temperature: %s C" % temp)
 ```
 - - -
 #### get_temperature_from_humidity
@@ -308,6 +310,7 @@ from astro_pi import AstroPi
 
 ap = AstroPi()
 temp = ap.get_temperature_from_humidity()
+print("Temperature: %s C" % temp)
 ```
 - - -
 #### get_temperature_from_pressure
@@ -323,6 +326,7 @@ from astro_pi import AstroPi
 
 ap = AstroPi()
 temp = ap.get_temperature_from_pressure()
+print("Temperature: %s C" % temp)
 ```
 - - -
 #### get_pressure
@@ -338,6 +342,7 @@ from astro_pi import AstroPi
 
 ap = AstroPi()
 pressure = ap.get_pressure()
+print("Pressure: %s Millibars" % pressure)
 ```
 - - -
 ### IMU Sensor
@@ -384,6 +389,7 @@ from astro_pi import AstroPi
 
 ap = AstroPi()
 orientation_rad = ap.get_orientation_radians()
+print("p: {pitch}, r: {roll}, y: {yaw}".format(**orientation_rad))
 ```
 - - -
 #### get_orientation_degrees
@@ -399,6 +405,7 @@ from astro_pi import AstroPi
 
 ap = AstroPi()
 orientation = ap.get_orientation_degrees()
+print("p: {pitch}, r: {roll}, y: {yaw}".format(**orientation))
 ```
 - - -
 #### get_orientation
@@ -410,6 +417,7 @@ from astro_pi import AstroPi
 
 ap = AstroPi()
 orientation = ap.get_orientation()
+print("p: {pitch}, r: {roll}, y: {yaw}".format(**orientation))
 ```
 - - -
 #### get_compass
@@ -425,6 +433,7 @@ from astro_pi import AstroPi
 
 ap = AstroPi()
 north = ap.get_compass()
+print("North: %s" % north)
 ```
 - - -
 #### get_compass_raw
@@ -440,6 +449,7 @@ from astro_pi import AstroPi
 
 ap = AstroPi()
 raw = ap.get_compass_raw()
+print("x: {x}, y: {y}, z: {z}".format(**raw))
 ```
 - - -
 #### get_gyroscope
@@ -455,6 +465,7 @@ from astro_pi import AstroPi
 
 ap = AstroPi()
 gyro_only = ap.get_gyroscope()
+print("p: {pitch}, r: {roll}, y: {yaw}".format(**gyro_only))
 ```
 - - -
 #### get_gyroscope_raw
@@ -470,6 +481,7 @@ from astro_pi import AstroPi
 
 ap = AstroPi()
 raw = ap.get_gyroscope_raw()
+print("x: {x}, y: {y}, z: {z}".format(**raw))
 ```
 - - -
 #### get_accelerometer
@@ -485,6 +497,7 @@ from astro_pi import AstroPi
 
 ap = AstroPi()
 accel_only = ap.get_accelerometer()
+print("p: {pitch}, r: {roll}, y: {yaw}".format(**accel_only))
 ```
 - - -
 #### get_accelerometer_raw
@@ -500,4 +513,5 @@ from astro_pi import AstroPi
 
 ap = AstroPi()
 raw = ap.get_accelerometer_raw()
+print("x: {x}, y: {y}, z: {z}".format(**raw))
 ```
