@@ -227,11 +227,13 @@ class AstroPi(object):
                     pixel_list.append(self._unpack_bin(f.read(2)))
         return pixel_list
 
-    def set_pixel_xy(self, x, y, pix):
+    def set_pixel(self, x, y, r, g, b):
         """
         Updates the single [R,G,B] pixel specified by x and y on the LED matrix
         Top left = 0,0 Bottom right = 7,7
         """
+
+        pix = [r, g, b]
 
         if x > 7 or x < 0:
             raise ValueError('X position must be between 0 and 7')
@@ -252,7 +254,7 @@ class AstroPi(object):
             f.seek(map[y][x] * 2)  # row, column
             f.write(self._pack_bin(pix))
 
-    def get_pixel_xy(self, x, y):
+    def get_pixel(self, x, y):
         """
         Returns a list of [R,G,B] representing the pixel specified by x and y
         on the LED matrix. Top left = 0,0 Bottom right = 7,7
