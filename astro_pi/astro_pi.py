@@ -241,9 +241,6 @@ class AstroPi(object):
         if y > 7 or y < 0:
             raise ValueError('Y position must be between 0 and 7')
 
-        if len(pix) != 3:
-            raise ValueError('Pixels must contain 3 elements: Red, Green and Blue')
-
         for element in pix:
             if element > 255 or element < 0:
                 raise ValueError('Pixel elements must be between 0 and 255')
