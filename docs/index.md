@@ -6,7 +6,28 @@ It is highly advised that code written for the Astro Pi [secondary school compet
 
 ## Installation
 
-Coming soon.
+Run the following command to download and run the Astro Pi install script.
+
+```bash
+wget -O - http://www.raspberrypi.org/files/astro-pi/astro-pi-install.sh --no-check-certificate | bash
+```
+
+When it's finished you'll see the following message:
+
+```
+You must reboot to complete the Astro Pi installation
+Type:
+sudo reboot
+and press Enter when ready
+```
+
+Reboot the Pi to complete the install:
+
+```bash
+sudo reboot
+```
+
+The rainbow pattern on the LED matrix should now turn off during boot up.
 
 ## Usage
 
