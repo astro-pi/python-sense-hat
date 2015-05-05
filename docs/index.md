@@ -6,7 +6,7 @@ It is highly advised that code written for the Astro Pi [secondary school compet
 
 ## Installation
 
-Run the following command to download and run the Astro Pi install script.
+Run the following command (either from the command prompt or a Terminal window) to download and start the Astro Pi install script.
 
 ```bash
 wget -O - http://www.raspberrypi.org/files/astro-pi/astro-pi-install.sh --no-check-certificate | bash
