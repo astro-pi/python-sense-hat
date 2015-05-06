@@ -1,5 +1,5 @@
 import os
-from setuptools import setup
+from setuptools import setup, find_packages
 
 
 def read(fname):
@@ -7,10 +7,10 @@ def read(fname):
 
 setup(
     name="Astro Pi HAT",
-    version="0.0.2",
+    version="1.0.0",
     author="Dave Honess",
     author_email="dave@raspberrypi.org",
-    description="Astro Pi sensor board for the Raspberry Pi",
+    description="Python API for Astro Pi (Sense HAT) for the Raspberry Pi",
     license="BSD",
     keywords=[
         "raspberrypi",
@@ -19,10 +19,11 @@ setup(
         "sense hat",
     ],
     url="https://github.com/astro-pi/astro-pi-hat",
-    packages=[
-        "astro_pi",
-    ],
-    package_data={"txt": ['astro_pi_text.txt'], "png": ['astro_pi_text.png']},
+    packages=find_packages(),
+    package_data={
+        "txt": ['astro_pi_text.txt'],
+        "png": ['astro_pi_text.png']
+    },
     include_package_data=True,
     install_requires=[
         "pillow",
@@ -30,7 +31,9 @@ setup(
     ],
     long_description=read('README.rst'),
     classifiers=[
-        "Development Status :: 2 - Pre-Alpha",
+        "Development Status :: 5 - Production/Stable",
+        "Programming Language :: Python :: 2",
+        "Programming Language :: Python :: 3",
         "Topic :: Scientific/Engineering :: Astronomy",
         "License :: OSI Approved :: BSD License",
     ],

@@ -50,8 +50,8 @@ Parameter | Type | Valid values | Explanation
 `redraw` | Boolean | `True` `False` | Whether or not to redraw what is already being displayed on the LED matrix. Defaults to `True`
 
 Returned type | Explanation
---- | --- 
-None | 
+--- | ---
+None |
 
 ```python
 from astro_pi import AstroPi
@@ -69,7 +69,7 @@ Parameter | Type | Valid values | Explanation
 `redraw` | Boolean | `True` `False` | Whether or not to redraw what is already being displayed on the LED matrix. Defaults to `True`
 
 Returned type | Explanation
---- | --- 
+--- | ---
 List | A list containing 64 smaller lists of `[R, G, B]` pixels (red, green, blue) representing the flipped image.
 
 ```python
@@ -88,7 +88,7 @@ Parameter | Type | Valid values | Explanation
 `redraw` | Boolean | `True` `False` | Whether or not to redraw what is already being displayed on the LED matrix when flipped. Defaults to `True`
 
 Returned type | Explanation
---- | --- 
+--- | ---
 List | A list containing 64 smaller lists of `[R, G, B]` pixels (red, green, blue) representing the flipped image.
 
 ```python
@@ -107,8 +107,8 @@ Parameter | Type | Valid values | Explanation
 `pixel_list` | List | `[[R, G, B] * 64]` | A list containing 64 smaller lists of `[R, G, B]` pixels (red, green, blue). Each R-G-B element must be an integer between 0 and 255.
 
 Returned type | Explanation
---- | --- 
-None | 
+--- | ---
+None |
 
 ```python
 from astro_pi import AstroPi
@@ -135,7 +135,7 @@ ap.set_pixels(question_mark)
 #### get_pixels
 
 Returned type | Explanation
---- | --- 
+--- | ---
 List | A list containing 64 smaller lists of `[R, G, B]` pixels (red, green, blue) representing the currently displayed image.
 
 ```python
@@ -157,22 +157,36 @@ Parameter | Type | Valid values | Explanation
 --- | --- | --- | ---
 `x` | Integer | `0 - 7` | 0 is on the left, 7 on the right.
 `y` | Integer |  `0 - 7` | 0 is at the top, 7 at the bottom.
+Colour can either be passed as an RGB tuple: |||
+`pixel` | Tuple or List |  `(r, g, b)` | Each element must be an integer between 0 and 255.
+Or three separate values for red, green and blue: |||
 `r` | Integer |  `0 - 255` | The Red element of the pixel.
 `g` | Integer |  `0 - 255` | The Green element of the pixel.
 `b` | Integer |  `0 - 255` | The Blue element of the pixel.
 
 Returned type | Explanation
---- | --- 
-None | 
+--- | ---
+None |
 
 ```python
 from astro_pi import AstroPi
 
 ap = AstroPi()
+
+# examples using (x, y, r, g, b)
 ap.set_pixel(0, 0, 255, 0, 0)
 ap.set_pixel(0, 7, 0, 255, 0)
 ap.set_pixel(7, 0, 0, 0, 255)
 ap.set_pixel(7, 7, 255, 0, 255)
+
+red = (255, 0, 0)
+green = (0, 255, 0)
+blue = (0, 0, 255)
+
+# examples using (x, y, pixel)
+ap.set_pixel(0, 0, red)
+ap.set_pixel(0, 0, green)
+ap.set_pixel(0, 0, blue)
 ```
 - - -
 #### get_pixel
@@ -183,7 +197,7 @@ Parameter | Type | Valid values | Explanation
 `y` | Integer |  `0 - 7` | 0 is at the top, 7 at the bottom.
 
 Returned type | Explanation
---- | --- 
+--- | ---
 List | Returns a list of `[R, G, B]` representing the colour of an individual LED matrix pixel at the specified X-Y coordinate.
 
 ```python
@@ -212,7 +226,7 @@ ap.load_image("space_invader.png")
 ```
 
 Returned type | Explanation
---- | --- 
+--- | ---
 List | A list containing 64 smaller lists of `[R, G, B]` pixels (red, green, blue) representing the loaded image after RGB conversion.
 
 ```python
@@ -228,20 +242,25 @@ Sets the entire LED matrix to a single colour, defaults to blank / off.
 
 Parameter | Type | Valid values | Explanation
 --- | --- | --- | ---
-`colour` | List | `[R, G, B]` | A list containing the R-G-B (red, green, blue) colour. Each R-G-B element must be an integer between 0 and 255. Defaults to `[0, 0, 0]`
-
-Returned type | Explanation
---- | --- 
-None | 
+`colour` | Tuple or List | `(r, g, b)` | A tuple or list containing the RGB (red, green, blue) values of the colour. Each element must be an integer between 0 and 255. Defaults to `(0, 0, 0)`.
+Alternatively, the RGB values can be passed individually:|||
+`r` | Integer |  `0 - 255` | The Red element of the colour.
+`g` | Integer |  `0 - 255` | The Green element of the colour.
+`b` | Integer |  `0 - 255` | The Blue element of the colour.
 
 ```python
-import time
 from astro_pi import AstroPi
+from time import sleep
 
 ap = AstroPi()
-ap.clear([255, 255, 255])
-time.sleep(1)
-ap.clear()
+
+red = (255, 0, 0)
+
+ap.clear()  # no arguments defaults to off
+sleep(1)
+ap.clear(red)  # passing in an RGB tuple
+sleep(1)
+ap.clear(255, 255, 255)  # passing in r, g and b values of a colour
 ```
 - - -
 #### show_message
@@ -250,14 +269,14 @@ Scrolls a text message from right to left across the LED matrix and at the speci
 
 Parameter | Type | Valid values | Explanation
 --- | --- | --- | ---
-`text_string` | String | Any text string. | The message to scroll. 
+`text_string` | String | Any text string. | The message to scroll.
 `scroll_speed` | Float | Any floating point number. | The speed at which the text should scroll. This value represents the time paused for between shifting the text to the left by one column of pixels. Defaults to `0.1`
 `text_colour` | List | `[R, G, B]` | A list containing the R-G-B (red, green, blue) colour of the text. Each R-G-B element must be an integer between 0 and 255. Defaults to `[255, 255, 255]` white.
 `back_colour` | List | `[R, G, B]` | A list containing the R-G-B (red, green, blue) colour of the background. Each R-G-B element must be an integer between 0 and 255. Defaults to `[0, 0, 0]` black / off.
 
 Returned type | Explanation
---- | --- 
-None | 
+--- | ---
+None |
 
 ```python
 from astro_pi import AstroPi
@@ -277,8 +296,8 @@ Parameter | Type | Valid values | Explanation
 `back_colour` | List | `[R, G, B]` | A list containing the R-G-B (red, green, blue) colour of the background. Each R-G-B element must be an integer between 0 and 255. Defaults to `[0, 0, 0]` black / off.
 
 Returned type | Explanation
---- | --- 
-None | 
+--- | ---
+None |
 
 ```python
 import time
@@ -298,7 +317,7 @@ for i in reversed(range(0,10)):
 Gets the percentage of relative humidity from the humidity sensor.
 
 Returned type | Explanation
---- | --- 
+--- | ---
 Float | The percentage of relative humidity.
 
 ```python
@@ -326,7 +345,7 @@ print("Temperature: %s C" % temp)
 Gets the current temperature in degrees Celsius from the humidity sensor.
 
 Returned type | Explanation
---- | --- 
+--- | ---
 Float | The current temperature in degrees Celsius.
 
 ```python
@@ -342,7 +361,7 @@ print("Temperature: %s C" % temp)
 Gets the current temperature in degrees Celsius from the pressure sensor.
 
 Returned type | Explanation
---- | --- 
+--- | ---
 Float | The current temperature in degrees Celsius.
 
 ```python
@@ -358,7 +377,7 @@ print("Temperature: %s C" % temp)
 Gets the current pressure in Millibars from the pressure sensor.
 
 Returned type | Explanation
---- | --- 
+--- | ---
 Float | The current pressure in Millibars.
 
 ```python
@@ -390,8 +409,8 @@ Parameter | Type | Valid values | Explanation
 `accel_enabled` | Boolean | `True` `False` | Whether or not the accelerometer should be enabled.
 
 Returned type | Explanation
---- | --- 
-None | 
+--- | ---
+None |
 
 ```python
 from astro_pi import AstroPi
@@ -405,7 +424,7 @@ ap.set_imu_config(False, True, False)  # gyroscope only
 Gets the current orientation in radians using the aircraft principal axes of pitch, roll and yaw.
 
 Returned type | Explanation
---- | --- 
+--- | ---
 Dictionary | A dictionary object indexed by the strings `pitch`, `roll` and `yaw`. The values are Floats representing the angle of the axis in radians.
 
 ```python
@@ -421,7 +440,7 @@ print("p: {pitch}, r: {roll}, y: {yaw}".format(**orientation_rad))
 Gets the current orientation in degrees using the aircraft principal axes of pitch, roll and yaw.
 
 Returned type | Explanation
---- | --- 
+--- | ---
 Dictionary | A dictionary object indexed by the strings `pitch`, `roll` and `yaw`. The values are Floats representing the angle of the axis in degrees.
 
 ```python
@@ -449,7 +468,7 @@ print("p: {pitch}, r: {roll}, y: {yaw}".format(**orientation))
 Calls `set_imu_config` to disable the gyroscope and accelerometer then gets the direction of North from the magnetometer in degrees.
 
 Returned type | Explanation
---- | --- 
+--- | ---
 Float | The direction of North.
 
 ```python
@@ -465,7 +484,7 @@ print("North: %s" % north)
 Gets the raw x, y and z axis magnetometer data.
 
 Returned type | Explanation
---- | --- 
+--- | ---
 Dictionary | A dictionary object indexed by the strings `x`, `y` and `z`. The values are Floats representing the magnetic intensity of the axis in **teslas**.
 
 ```python
@@ -481,7 +500,7 @@ print("x: {x}, y: {y}, z: {z}".format(**raw))
 Calls `set_imu_config` to disable the magnetometer and accelerometer then gets the current orientation from the gyroscope only.
 
 Returned type | Explanation
---- | --- 
+--- | ---
 Dictionary | A dictionary object indexed by the strings `pitch`, `roll` and `yaw`. The values are Floats representing the angle of the axis in degrees.
 
 ```python
@@ -497,7 +516,7 @@ print("p: {pitch}, r: {roll}, y: {yaw}".format(**gyro_only))
 Gets the raw x, y and z axis gyroscope data.
 
 Returned type | Explanation
---- | --- 
+--- | ---
 Dictionary | A dictionary object indexed by the strings `x`, `y` and `z`. The values are Floats representing the rotational intensity of the axis in **radians per second**.
 
 ```python
@@ -513,7 +532,7 @@ print("x: {x}, y: {y}, z: {z}".format(**raw))
 Calls `set_imu_config` to disable the magnetometer and gyroscope then gets the current orientation from the accelerometer only.
 
 Returned type | Explanation
---- | --- 
+--- | ---
 Dictionary | A dictionary object indexed by the strings `pitch`, `roll` and `yaw`. The values are Floats representing the angle of the axis in degrees.
 
 ```python
@@ -529,7 +548,7 @@ print("p: {pitch}, r: {roll}, y: {yaw}".format(**accel_only))
 Gets the raw x, y and z axis accelerometer data.
 
 Returned type | Explanation
---- | --- 
+--- | ---
 Dictionary | A dictionary object indexed by the strings `x`, `y` and `z`. The values are Floats representing the acceleration intensity of the axis in **Gs**.
 
 ```python
