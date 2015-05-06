@@ -227,13 +227,27 @@ class AstroPi(object):
                     pixel_list.append(self._unpack_bin(f.read(2)))
         return pixel_list
 
-    def set_pixel(self, x, y, r, g, b):
+    def set_pixel(self, x, y, *args):
         """
         Updates the single [R,G,B] pixel specified by x and y on the LED matrix
         Top left = 0,0 Bottom right = 7,7
+
+        e.g. ap.set_pixel(x, y, r, g, b)
+        or
+        pixel = (r, g, b)
+        ap.set_pixel(x, y, pixel)
         """
 
-        pix = [r, g, b]
+        pixel_error = 'Pixel arguments must be given as (r, g, b) or r, g, b'
+
+        if len(args) == 1:
+            pixel = args[0]
+            if len(pixel) != 3:
+                raise ValueError(pixel_error)
+        elif len(args) == 3:
+            pixel = args
+        else:
+            raise ValueError(pixel_error)
 
         if x > 7 or x < 0:
             raise ValueError('X position must be between 0 and 7')
@@ -241,7 +255,7 @@ class AstroPi(object):
         if y > 7 or y < 0:
             raise ValueError('Y position must be between 0 and 7')
 
-        for element in pix:
+        for element in pixel:
             if element > 255 or element < 0:
                 raise ValueError('Pixel elements must be between 0 and 255')
 
@@ -249,7 +263,7 @@ class AstroPi(object):
             map = self._pix_map[self._rotation]
             # Two bytes per pixel in fb memory, 16 bit RGB565
             f.seek(map[y][x] * 2)  # row, column
-            f.write(self._pack_bin(pix))
+            f.write(self._pack_bin(pixel))
 
     def get_pixel(self, x, y):
         """
