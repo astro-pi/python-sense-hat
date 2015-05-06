@@ -304,10 +304,28 @@ class AstroPi(object):
 
         return pixel_list
 
-    def clear(self, colour=[0, 0, 0]):
+    def clear(self, *args):
         """
         Clears the LED matrix with a single colour, default is black / off
+
+        e.g. ap.clear()
+        or
+        ap.clear(r, g, b)
+        or
+        colour = (r, g, b)
+        ap.clear(colour)
         """
+
+        black = (0, 0, 0)  # default
+
+        if len(args) == 0:
+            colour = black
+        elif len(args) == 1:
+            colour = args[0]
+        elif len(args) == 3:
+            colour = args
+        else:
+            raise ValueError('Pixel arguments must be given as (r, g, b) or r, g, b')
 
         self.set_pixels([colour] * 64)
 
