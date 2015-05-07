@@ -54,8 +54,8 @@ Open Source
 .. _Raspberry Pi: https://www.raspberrypi.org/
 .. _Astro Pi: http://www.astro-pi.org/
 .. _pythonhosted.org/astro-pi: http://pythonhosted.org/astro-pi/
-.. _Dave Honess`: https://github.com/davidhoness
-.. _Ben Nuttall`: https://github.com/bennuttall
+.. _Dave Honess: https://github.com/davidhoness
+.. _Ben Nuttall: https://github.com/bennuttall
 .. _BSD Licence: http://opensource.org/licenses/BSD-3-Clause
 .. _GitHub: https://github.com/astro-pi/astro-pi-hat
 .. _GitHub Issues: https://github.com/astro-pi/astro-pi-hat/issues
