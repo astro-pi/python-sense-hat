@@ -7,10 +7,11 @@ def read(fname):
 
 setup(
     name="astro-pi",
-    version="1.0.0",
+    version="1.0.2",
     author="Dave Honess",
     author_email="dave@raspberrypi.org",
     description="Python API for Astro Pi (Sense HAT) for the Raspberry Pi",
+    long_description=read('README.rst'),
     license="BSD",
     keywords=[
         "raspberrypi",
@@ -29,7 +30,6 @@ setup(
         "pillow",
         "numpy"
     ],
-    long_description=read('README.rst'),
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Programming Language :: Python :: 2",
