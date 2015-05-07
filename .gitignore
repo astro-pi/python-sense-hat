@@ -1,5 +1,5 @@
 *.pyc
-Astro_Pi_HAT.egg-info/
+*.egg-info/
 examples/RTIMULib.ini
 build/
 dist/
