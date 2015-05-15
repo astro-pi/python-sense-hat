@@ -358,8 +358,9 @@ class AstroPi(object):
         self._rotation -= 90
         if self._rotation < 0:
             self._rotation = 270
-        string_padding = [back_colour] * 64
-        letter_padding = [back_colour] * 8
+        dummy_colour = [None, None, None]
+        string_padding = [dummy_colour] * 64
+        letter_padding = [dummy_colour] * 8
         # Build pixels from dictionary
         scroll_pixels = []
         scroll_pixels.extend(string_padding)
