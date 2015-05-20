@@ -401,9 +401,10 @@ class AstroPi(object):
         self._rotation -= 90
         if self._rotation < 0:
             self._rotation = 270
-        pixel_list = [back_colour] * 8
+        dummy_colour=[None, None, None]
+        pixel_list = [dummy_colour] * 8
         pixel_list.extend(self._get_char_pixels(s))
-        pixel_list.extend([back_colour] * 16)
+        pixel_list.extend([dummy_colour] * 16)
         coloured_pixels = [
             text_colour if pixel == [255, 255, 255] else back_colour
             for pixel in pixel_list
