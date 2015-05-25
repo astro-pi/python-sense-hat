@@ -7,7 +7,7 @@ def read(fname):
 
 setup(
     name="astro-pi",
-    version="1.1.1",
+    version="1.1.3",
     author="Dave Honess",
     author_email="dave@raspberrypi.org",
     description="Python API for Astro Pi (Sense HAT) for the Raspberry Pi",
