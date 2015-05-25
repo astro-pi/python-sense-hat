@@ -1,4 +1,4 @@
 from __future__ import absolute_import
 from .astro_pi import AstroPi
 
-__version__ = '1.0.2'
+__version__ = '1.1.0'

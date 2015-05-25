@@ -1,6 +1,6 @@
-=========
+============
 Astro Pi HAT
-=========
+============
 
 Python module to control the Astro Pi / Sense HAT for the `Raspberry Pi`_ used in the `Astro Pi`_ mission - an education outreach programme for UK schools sending code experiments to the International Space Station.
 
@@ -34,7 +34,7 @@ Import the Astro Pi module and instantiate an object::
     ap = AstroPi()
 
 Documentation
-============
+=============
 
 Comprehensive documentation is available at `pythonhosted.org/astro-pi`_
 
