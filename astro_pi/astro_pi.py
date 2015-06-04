@@ -336,9 +336,9 @@ class AstroPi(object):
         """
 
         if len(s) == 1 and s in self._text_dict.keys():
-            return self._text_dict[s]
+            return list(self._text_dict[s])
         else:
-            return self._text_dict['?']
+            return list(self._text_dict['?'])
 
     def show_message(
             self,
