@@ -1,0 +1,34 @@
+Source: astropi
+Section: python
+Priority: optional
+Maintainer: Serge Schneider <serge@raspberrypi.org>
+Build-Depends: debhelper (>= 9~), dh-python, python-all (>= 2.6.6-3~),
+ python-setuptools, python3-all, python3-setuptools
+Standards-Version: 3.9.6
+Homepage: https://github.com/astro-pi/astro-pi-hat
+Vcs-Git: https://github.com/astro-pi/astro-pi-hat.git -b debian
+Vcs-Browser: https://github.com/astro-pi/astro-pi-hat/tree/debian
+X-Python-Version: >= 2.6
+X-Python3-Version: >= 3.2
+
+Package: python-astropi
+Architecture: any
+Depends: ${misc:Depends}, ${python:Depends}, python-rtimulib, python-pil,
+ python-numpy
+Description: Astro Pi python library (Python 2)
+ Python module to control the Astro Pi / Sense HAT for the Raspberry Pi used
+ in the Astro Pi mission - an education outreach programme for UK schools
+ sending code experiments to the International Space Station
+ .
+ This package installs the library for Python 2.
+
+Package: python3-astropi
+Architecture: any
+Depends: ${misc:Depends}, ${python3:Depends}, python3-rtimulib, python3-pil,
+ python3-numpy
+Description: Astro Pi python library (Python 3)
+ Python module to control the Astro Pi / Sense HAT for the Raspberry Pi used
+ in the Astro Pi mission - an education outreach programme for UK schools
+ sending code experiments to the International Space Station
+ .
+ This package installs the library for Python 3.
