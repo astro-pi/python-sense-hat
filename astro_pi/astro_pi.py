@@ -5,19 +5,26 @@ import sys
 import math
 import time
 import numpy as np
+import shutil
+import glob
 import RTIMU  # custom version
 from PIL import Image  # pillow
 
 
 class AstroPi(object):
+
+    SENSE_HAT_FB_NAME = 'RPi-Sense FB'
+    SETTINGS_HOME_PATH = '.config/astro_pi'
+
     def __init__(
             self,
-            fb_device='/dev/fb1',
             imu_settings_file='RTIMULib',
             text_assets='astro_pi_text'
         ):
 
-        self._fb_device = fb_device
+        self._fb_device = self._get_fb_device()
+        if self._fb_device is None:
+            raise OSError('Cannot detect %s device' % self.SENSE_HAT_FB_NAME)
 
         # 0 is With B+ HDMI port facing downwards
         pix_map0 = np.array([
@@ -52,7 +59,7 @@ class AstroPi(object):
         )
 
         # Load IMU settings and calibration data
-        self._imu_settings = RTIMU.Settings(imu_settings_file)
+        self._imu_settings = self._get_settings_file(imu_settings_file)
         self._imu = RTIMU.RTIMU(self._imu_settings)
         self._imu_init = False  # Will be initialised as and when needed
         self._pressure = RTIMU.RTPressure(self._imu_settings)
@@ -115,6 +122,49 @@ class AstroPi(object):
                 if is_empty:
                     del char[-8:]
         return char
+
+    def _get_settings_file(self, imu_settings_file):
+        """
+        Internal. Logic to check for a system wide RTIMU ini file. This is
+        copied to the home folder if one is not already found there.
+        """
+
+        ini_file = '%s.ini' % imu_settings_file
+
+        home_path = os.path.join(os.getenv('HOME'), self.SETTINGS_HOME_PATH)
+        if not os.path.exists(home_path):
+            os.makedirs(home_path)
+
+        home_file = os.path.join(home_path, ini_file)
+        home_exists = os.path.isfile(home_file)
+        system_file = os.path.join('/etc', ini_file)
+        system_exists = os.path.isfile(system_file)
+
+        if system_exists and not home_exists:
+            shutil.copyfile(system_file, home_file)
+
+        return RTIMU.Settings(os.path.join(home_path, imu_settings_file))  # RTIMU will add .ini internally
+
+    def _get_fb_device(self):
+        """
+        Internal. Finds the correct frame buffer device for the sense HAT
+        and returns its /dev name.
+        """
+
+        device = None
+
+        for fb in glob.glob('/sys/class/graphics/fb*'):
+            name_file = os.path.join(fb, 'name')
+            if os.path.isfile(name_file):
+                with open(name_file, 'r') as f:
+                    name = f.read()
+                if name.strip() == self.SENSE_HAT_FB_NAME:
+                    fb_device = fb.replace(os.path.dirname(fb), '/dev')
+                    if os.path.exists(fb_device):
+                        device = fb_device
+                        break
+
+        return device
 
     ####
     # LED Matrix
@@ -422,12 +472,9 @@ class AstroPi(object):
         """
 
         if not self._humidity_init:
-            try:
-                self._humidity_init = self._humidity.humidityInit()
-                assert(self._humidity_init)
-                print("Humidity sensor Init Succeeded")
-            except AssertionError:
-                raise OSError("Humidity Init Failed, please run as root / use sudo")
+            self._humidity_init = self._humidity.humidityInit()
+            if not self._humidity_init:
+                raise OSError('Humidity Init Failed, please run as root / use sudo')
 
     def _init_pressure(self):
         """
@@ -435,12 +482,9 @@ class AstroPi(object):
         """
 
         if not self._pressure_init:
-            try:
-                self._pressure_init = self._pressure.pressureInit()
-                assert(self._pressure_init)
-                print("Pressure sensor Init Succeeded")
-            except AssertionError:
-                raise OSError("Pressure Init Failed, please run as root / use sudo")
+            self._pressure_init = self._pressure.pressureInit()
+            if not self._pressure_init:
+                raise OSError('Pressure Init Failed, please run as root / use sudo')
 
     def get_humidity(self):
         """
@@ -507,15 +551,13 @@ class AstroPi(object):
         """
 
         if not self._imu_init:
-            try:
-                self._imu_init = self._imu.IMUInit()
-                assert(self._imu_init)
-                print("IMU Init Succeeded")
+            self._imu_init = self._imu.IMUInit()
+            if self._imu_init:
                 self._imu_poll_interval = self._imu.IMUGetPollInterval() * 0.001
                 # Enable everything on IMU
                 self.set_imu_config(True, True, True)
-            except AssertionError:
-                raise OSError("IMU Init Failed, please run as root / use sudo")
+            else:
+                raise OSError('IMU Init Failed, please run as root / use sudo')
 
     def set_imu_config(self, compass_enabled, gyro_enabled, accel_enabled):
         """
