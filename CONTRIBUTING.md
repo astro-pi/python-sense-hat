@@ -2,7 +2,7 @@
 
 ## Issues
 
-Please report bugs and other issues as [GitHub issues](https://github.com/astro_pi/astro-pi-hat/issues) ensuring to give as much detail about your problem as possible.
+Please report bugs and other issues as [GitHub issues](https://github.com/astro-pi/astro-pi-hat/issues) ensuring to give as much detail about your problem as possible.
 
 ## Pull Requests
 
