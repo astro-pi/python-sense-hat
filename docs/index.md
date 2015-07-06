@@ -485,7 +485,7 @@ Gets the raw x, y and z axis magnetometer data.
 
 Returned type | Explanation
 --- | ---
-Dictionary | A dictionary object indexed by the strings `x`, `y` and `z`. The values are Floats representing the magnetic intensity of the axis in **teslas**.
+Dictionary | A dictionary object indexed by the strings `x`, `y` and `z`. The values are Floats representing the magnetic intensity of the axis in **microteslas** (µT).
 
 ```python
 from astro_pi import AstroPi
