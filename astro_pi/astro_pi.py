@@ -8,6 +8,7 @@ import numpy as np
 import shutil
 import glob
 import RTIMU  # custom version
+import pwd
 from PIL import Image  # pillow
 
 
@@ -131,7 +132,8 @@ class AstroPi(object):
 
         ini_file = '%s.ini' % imu_settings_file
 
-        home_path = os.path.join(os.getenv('HOME'), self.SETTINGS_HOME_PATH)
+        home_dir = pwd.getpwuid(os.getuid())[5]
+        home_path = os.path.join(home_dir, self.SETTINGS_HOME_PATH)
         if not os.path.exists(home_path):
             os.makedirs(home_path)
 
