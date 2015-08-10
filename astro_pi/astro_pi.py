@@ -189,26 +189,31 @@ class AstroPi(object):
 
     def _pack_bin(self, pix):
         """
-        Internal. Encodes python list [R,G,B] into 16 bit RGB565
+        Internal. Encodes python list [R,G,B] into 16 bit RGB565 and applies display gamma curve
         """
-
-        r = (pix[0] >> 3) & 0x1F
-        g = (pix[1] >> 2) & 0x3F
-        b = (pix[2] >> 3) & 0x1F
+        # Apply gamma curve by mapping into range (0 -> 1) and raising to power gamma.
+        gamma = 2.2
+        r = int((pix[0] / float(0xFF)) ** gamma * 0x1F + 0.5)   # adding 0.5 causes rounding rather than truncation
+        g = int((pix[1] / float(0xFF)) ** gamma * 0x3F + 0.5)
+        b = int((pix[2] / float(0xFF)) ** gamma * 0x1F + 0.5)
         bits16 = (r << 11) + (g << 5) + b
         return struct.pack('H', bits16)
 
     def _unpack_bin(self, packed):
         """
-        Internal. Decodes 16 bit RGB565 into python list [R,G,B]
+        Internal. Decodes 16 bit RGB565 into python list [R,G,B] and removes gamma
         """
-
+        
+        inv_gamma = 1 / 2.2
         output = struct.unpack('H', packed)
         bits16 = output[0]
         r = (bits16 & 0xF800) >> 11
         g = (bits16 & 0x7E0) >> 5
         b = (bits16 & 0x1F)
-        return [int(r << 3), int(g << 2), int(b << 3)]
+        r = int((r / float(0x1F)) ** inv_gamma * 0xFF + 0.5)
+        g = int((g / float(0x3F)) ** inv_gamma * 0xFF + 0.5)
+        b = int((g / float(0x1F)) ** inv_gamma * 0xFF + 0.5)
+        return [r, g, b]
 
     def flip_h(self, redraw=True):
         """
