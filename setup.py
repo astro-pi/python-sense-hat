@@ -10,7 +10,7 @@ setup(
     version="2.0.0",
     author="Dave Honess",
     author_email="dave@raspberrypi.org",
-    description="Python API to control the Sense HAT for Raspberry Pi",
+    description="Python module to control the Raspberry Pi Sense HAT used in the Astro Pi mission",
     long_description=read('README.rst'),
     license="BSD",
     keywords=[
@@ -18,7 +18,7 @@ setup(
         "raspberrypi",
         "astro pi",
     ],
-    url="https://github.com/astro-pi/astro-pi-hat",
+    url="https://github.com/RPi-Distro/python-sense-hat",
     packages=find_packages(),
     package_data={
         "txt": ['sense_hat_text.txt'],
