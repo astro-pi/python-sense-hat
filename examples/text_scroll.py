@@ -1,6 +1,7 @@
 #!/usr/bin/python
-from astro_pi import AstroPi
+from sense_hat import SenseHat
 
-ap = AstroPi()
-ap.set_rotation(180)
-ap.show_message("One small step for Pi!", text_colour=[255, 0, 0])
+sense = SenseHat()
+sense.set_rotation(180)
+red = (255, 0, 0)
+sense.show_message("One small step for Pi!", text_colour=red)

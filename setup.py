@@ -6,24 +6,23 @@ def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(
-    name="astro-pi",
-    version="1.1.6",
+    name="sense-hat",
+    version="2.0.0",
     author="Dave Honess",
     author_email="dave@raspberrypi.org",
-    description="Python API for Astro Pi (Sense HAT) for the Raspberry Pi",
+    description="Python API to control the Sense HAT for Raspberry Pi",
     long_description=read('README.rst'),
     license="BSD",
     keywords=[
+        "sense hat",
         "raspberrypi",
         "astro pi",
-        "astro pi hat",
-        "sense hat",
     ],
     url="https://github.com/astro-pi/astro-pi-hat",
     packages=find_packages(),
     package_data={
-        "txt": ['astro_pi_text.txt'],
-        "png": ['astro_pi_text.png']
+        "txt": ['sense_hat_text.txt'],
+        "png": ['sense_hat_text.png']
     },
     include_package_data=True,
     install_requires=[

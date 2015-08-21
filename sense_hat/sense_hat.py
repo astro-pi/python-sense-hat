@@ -12,15 +12,15 @@ import pwd
 from PIL import Image  # pillow
 
 
-class AstroPi(object):
+class SenseHat(object):
 
     SENSE_HAT_FB_NAME = 'RPi-Sense FB'
-    SETTINGS_HOME_PATH = '.config/astro_pi'
+    SETTINGS_HOME_PATH = '.config/sense_hat'
 
     def __init__(
             self,
             imu_settings_file='RTIMULib',
-            text_assets='astro_pi_text'
+            text_assets='sense_hat_text'
         ):
 
         self._fb_device = self._get_fb_device()

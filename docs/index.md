@@ -1,12 +1,10 @@
 # Astro Pi
 
-Python module to control the [Astro Pi](http://astro-pi.org/) HAT also known as the Raspberry Pi Sense HAT.
-
-It is highly advised that code written for the Astro Pi [secondary school competition](http://astro-pi.org/secondary-school-competition/) uses this module in Python. This helps guarantee that it will work when we evaluate your code.
+Python module to control the Raspberry Pi Sense HAT used in the [Astro Pi](http://astro-pi.org/) mission.
 
 ## Installation
 
-Have your Pi connected to the Internet and then run the following command (from the command prompt or a Terminal window) to download and start the Astro Pi install script.
+With your Raspberry Pi connected to the Internet, run the following command (from the command prompt or a Terminal window) to download and start the Sense HAT install script:
 
 ```bash
 wget -O - http://www.raspberrypi.org/files/astro-pi/astro-pi-install.sh --no-check-certificate | bash
@@ -33,9 +31,9 @@ The rainbow pattern on the LED matrix should now turn off during boot up.
 ## Usage
 
 ```python
-from astro_pi import AstroPi
+from sense_hat import AstroPi
 
-ap = AstroPi()
+sense = SenseHat()
 ```
 
 ### LED Matrix
@@ -54,10 +52,10 @@ Returned type | Explanation
 None |
 
 ```python
-from astro_pi import AstroPi
+from sense_hat import SenseHat
 
-ap = AstroPi()
-ap.set_rotation(180)
+sense = SenseHat()
+sense.set_rotation(180)
 ```
 - - -
 #### flip_h
@@ -73,10 +71,10 @@ Returned type | Explanation
 List | A list containing 64 smaller lists of `[R, G, B]` pixels (red, green, blue) representing the flipped image.
 
 ```python
-from astro_pi import AstroPi
+from sense_hat import SenseHat
 
-ap = AstroPi()
-ap.flip_h()
+sense = SenseHat()
+sense.flip_h()
 ```
 - - -
 #### flip_v
@@ -92,10 +90,10 @@ Returned type | Explanation
 List | A list containing 64 smaller lists of `[R, G, B]` pixels (red, green, blue) representing the flipped image.
 
 ```python
-from astro_pi import AstroPi
+from sense_hat import SenseHat
 
-ap = AstroPi()
-ap.flip_v()
+sense = SenseHat()
+sense.flip_v()
 ```
 - - -
 #### set_pixels
@@ -111,9 +109,9 @@ Returned type | Explanation
 None |
 
 ```python
-from astro_pi import AstroPi
+from sense_hat import SenseHat
 
-ap = AstroPi()
+sense = SenseHat()
 
 X = [255, 0, 0]  # Red
 O = [255, 255, 255]  # White
@@ -129,7 +127,7 @@ O, O, O, O, O, O, O, O,
 O, O, O, X, O, O, O, O
 ]
 
-ap.set_pixels(question_mark)
+sense.set_pixels(question_mark)
 ```
 - - -
 #### get_pixels
@@ -139,10 +137,10 @@ Returned type | Explanation
 List | A list containing 64 smaller lists of `[R, G, B]` pixels (red, green, blue) representing the currently displayed image.
 
 ```python
-from astro_pi import AstroPi
+from sense_hat import SenseHat
 
-ap = AstroPi()
-pixel_list = ap.get_pixels()
+sense = SenseHat()
+pixel_list = sense.get_pixels()
 ```
 
 Note: You will notice that the pixel values you pass into `set_pixels` sometimes change when you read them back with  `get_pixels`. This is because we specify each pixel element as 8 bit numbers (0 to 255) but when they're passed into the Linux frame buffer for the LED matrix the numbers are bit shifted down to fit into RGB 565. 5 bits for red, 6 bits for green and 5 bits for blue. The loss of binary precision when performing this conversion (3 bits lost for red, 2 for green and 3 for blue) accounts for the discrepancies you see.
@@ -169,24 +167,24 @@ Returned type | Explanation
 None |
 
 ```python
-from astro_pi import AstroPi
+from sense_hat import SenseHat
 
-ap = AstroPi()
+sense = SenseHat()
 
 # examples using (x, y, r, g, b)
-ap.set_pixel(0, 0, 255, 0, 0)
-ap.set_pixel(0, 7, 0, 255, 0)
-ap.set_pixel(7, 0, 0, 0, 255)
-ap.set_pixel(7, 7, 255, 0, 255)
+sense.set_pixel(0, 0, 255, 0, 0)
+sense.set_pixel(0, 7, 0, 255, 0)
+sense.set_pixel(7, 0, 0, 0, 255)
+sense.set_pixel(7, 7, 255, 0, 255)
 
 red = (255, 0, 0)
 green = (0, 255, 0)
 blue = (0, 0, 255)
 
 # examples using (x, y, pixel)
-ap.set_pixel(0, 0, red)
-ap.set_pixel(0, 0, green)
-ap.set_pixel(0, 0, blue)
+sense.set_pixel(0, 0, red)
+sense.set_pixel(0, 0, green)
+sense.set_pixel(0, 0, blue)
 ```
 - - -
 #### get_pixel
@@ -201,10 +199,10 @@ Returned type | Explanation
 List | Returns a list of `[R, G, B]` representing the colour of an individual LED matrix pixel at the specified X-Y coordinate.
 
 ```python
-from astro_pi import AstroPi
+from sense_hat import SenseHat
 
-ap = AstroPi()
-top_left_pixel = ap.get_pixel(0, 0)
+sense = SenseHat()
+top_left_pixel = sense.get_pixel(0, 0)
 ```
 
 Note: Please read the note under `get_pixels`
@@ -219,10 +217,10 @@ Parameter | Type | Valid values | Explanation
 `redraw` | Boolean | `True` `False` | Whether or not to redraw the loaded image file on the LED matrix. Defaults to `True`
 
 ```python
-from astro_pi import AstroPi
+from sense_hat import SenseHat
 
-ap = AstroPi()
-ap.load_image("space_invader.png")
+sense = SenseHat()
+sense.load_image("space_invader.png")
 ```
 
 Returned type | Explanation
@@ -230,10 +228,10 @@ Returned type | Explanation
 List | A list containing 64 smaller lists of `[R, G, B]` pixels (red, green, blue) representing the loaded image after RGB conversion.
 
 ```python
-from astro_pi import AstroPi
+from sense_hat import SenseHat
 
-ap = AstroPi()
-invader_pixels = ap.load_image("space_invader.png", redraw=False)
+sense = SenseHat()
+invader_pixels = sense.load_image("space_invader.png", redraw=False)
 ```
 - - -
 #### clear
@@ -249,18 +247,18 @@ Alternatively, the RGB values can be passed individually:|||
 `b` | Integer |  `0 - 255` | The Blue element of the colour.
 
 ```python
-from astro_pi import AstroPi
+from sense_hat import SenseHat
 from time import sleep
 
-ap = AstroPi()
+sense = SenseHat()
 
 red = (255, 0, 0)
 
-ap.clear()  # no arguments defaults to off
+sense.clear()  # no arguments defaults to off
 sleep(1)
-ap.clear(red)  # passing in an RGB tuple
+sense.clear(red)  # passing in an RGB tuple
 sleep(1)
-ap.clear(255, 255, 255)  # passing in r, g and b values of a colour
+sense.clear(255, 255, 255)  # passing in r, g and b values of a colour
 ```
 - - -
 #### show_message
@@ -279,10 +277,10 @@ Returned type | Explanation
 None |
 
 ```python
-from astro_pi import AstroPi
+from sense_hat import SenseHat
 
-ap = AstroPi()
-ap.show_message("One small step for Pi!", text_colour=[255, 0, 0])
+sense = SenseHat()
+sense.show_message("One small step for Pi!", text_colour=[255, 0, 0])
 ```
 - - -
 #### show_letter
@@ -301,12 +299,12 @@ None |
 
 ```python
 import time
-from astro_pi import AstroPi
+from sense_hat import SenseHat
 
-ap = AstroPi()
+sense = SenseHat()
 
 for i in reversed(range(0,10)):
-    ap.show_letter(str(i))
+    sense.show_letter(str(i))
     time.sleep(1)
 ```
 - - -
@@ -321,10 +319,10 @@ Returned type | Explanation
 Float | The percentage of relative humidity.
 
 ```python
-from astro_pi import AstroPi
+from sense_hat import SenseHat
 
-ap = AstroPi()
-humidity = ap.get_humidity()
+sense = SenseHat()
+humidity = sense.get_humidity()
 print("Humidity: %s %%rH" % humidity)
 ```
 - - -
@@ -333,10 +331,10 @@ print("Humidity: %s %%rH" % humidity)
 Calls `get_temperature_from_humidity` below.
 
 ```python
-from astro_pi import AstroPi
+from sense_hat import SenseHat
 
-ap = AstroPi()
-temp = ap.get_temperature()
+sense = SenseHat()
+temp = sense.get_temperature()
 print("Temperature: %s C" % temp)
 ```
 - - -
@@ -349,10 +347,10 @@ Returned type | Explanation
 Float | The current temperature in degrees Celsius.
 
 ```python
-from astro_pi import AstroPi
+from sense_hat import SenseHat
 
-ap = AstroPi()
-temp = ap.get_temperature_from_humidity()
+sense = SenseHat()
+temp = sense.get_temperature_from_humidity()
 print("Temperature: %s C" % temp)
 ```
 - - -
@@ -365,10 +363,10 @@ Returned type | Explanation
 Float | The current temperature in degrees Celsius.
 
 ```python
-from astro_pi import AstroPi
+from sense_hat import SenseHat
 
-ap = AstroPi()
-temp = ap.get_temperature_from_pressure()
+sense = SenseHat()
+temp = sense.get_temperature_from_pressure()
 print("Temperature: %s C" % temp)
 ```
 - - -
@@ -381,10 +379,10 @@ Returned type | Explanation
 Float | The current pressure in Millibars.
 
 ```python
-from astro_pi import AstroPi
+from sense_hat import SenseHat
 
-ap = AstroPi()
-pressure = ap.get_pressure()
+sense = SenseHat()
+pressure = sense.get_pressure()
 print("Pressure: %s Millibars" % pressure)
 ```
 - - -
@@ -413,10 +411,10 @@ Returned type | Explanation
 None |
 
 ```python
-from astro_pi import AstroPi
+from sense_hat import SenseHat
 
-ap = AstroPi()
-ap.set_imu_config(False, True, False)  # gyroscope only
+sense = SenseHat()
+sense.set_imu_config(False, True, False)  # gyroscope only
 ```
 - - -
 #### get_orientation_radians
@@ -428,10 +426,10 @@ Returned type | Explanation
 Dictionary | A dictionary object indexed by the strings `pitch`, `roll` and `yaw`. The values are Floats representing the angle of the axis in radians.
 
 ```python
-from astro_pi import AstroPi
+from sense_hat import SenseHat
 
-ap = AstroPi()
-orientation_rad = ap.get_orientation_radians()
+sense = SenseHat()
+orientation_rad = sense.get_orientation_radians()
 print("p: {pitch}, r: {roll}, y: {yaw}".format(**orientation_rad))
 ```
 - - -
@@ -444,10 +442,10 @@ Returned type | Explanation
 Dictionary | A dictionary object indexed by the strings `pitch`, `roll` and `yaw`. The values are Floats representing the angle of the axis in degrees.
 
 ```python
-from astro_pi import AstroPi
+from sense_hat import SenseHat
 
-ap = AstroPi()
-orientation = ap.get_orientation_degrees()
+sense = SenseHat()
+orientation = sense.get_orientation_degrees()
 print("p: {pitch}, r: {roll}, y: {yaw}".format(**orientation))
 ```
 - - -
@@ -456,10 +454,10 @@ print("p: {pitch}, r: {roll}, y: {yaw}".format(**orientation))
 Calls `get_orientation_degrees` above.
 
 ```python
-from astro_pi import AstroPi
+from sense_hat import SenseHat
 
-ap = AstroPi()
-orientation = ap.get_orientation()
+sense = SenseHat()
+orientation = sense.get_orientation()
 print("p: {pitch}, r: {roll}, y: {yaw}".format(**orientation))
 ```
 - - -
@@ -472,10 +470,10 @@ Returned type | Explanation
 Float | The direction of North.
 
 ```python
-from astro_pi import AstroPi
+from sense_hat import SenseHat
 
-ap = AstroPi()
-north = ap.get_compass()
+sense = SenseHat()
+north = sense.get_compass()
 print("North: %s" % north)
 ```
 - - -
@@ -488,10 +486,10 @@ Returned type | Explanation
 Dictionary | A dictionary object indexed by the strings `x`, `y` and `z`. The values are Floats representing the magnetic intensity of the axis in **microteslas** (µT).
 
 ```python
-from astro_pi import AstroPi
+from sense_hat import SenseHat
 
-ap = AstroPi()
-raw = ap.get_compass_raw()
+sense = SenseHat()
+raw = sense.get_compass_raw()
 print("x: {x}, y: {y}, z: {z}".format(**raw))
 ```
 - - -
@@ -504,10 +502,10 @@ Returned type | Explanation
 Dictionary | A dictionary object indexed by the strings `pitch`, `roll` and `yaw`. The values are Floats representing the angle of the axis in degrees.
 
 ```python
-from astro_pi import AstroPi
+from sense_hat import SenseHat
 
-ap = AstroPi()
-gyro_only = ap.get_gyroscope()
+sense = SenseHat()
+gyro_only = sense.get_gyroscope()
 print("p: {pitch}, r: {roll}, y: {yaw}".format(**gyro_only))
 ```
 - - -
@@ -520,10 +518,10 @@ Returned type | Explanation
 Dictionary | A dictionary object indexed by the strings `x`, `y` and `z`. The values are Floats representing the rotational intensity of the axis in **radians per second**.
 
 ```python
-from astro_pi import AstroPi
+from sense_hat import SenseHat
 
-ap = AstroPi()
-raw = ap.get_gyroscope_raw()
+sense = SenseHat()
+raw = sense.get_gyroscope_raw()
 print("x: {x}, y: {y}, z: {z}".format(**raw))
 ```
 - - -
@@ -536,10 +534,10 @@ Returned type | Explanation
 Dictionary | A dictionary object indexed by the strings `pitch`, `roll` and `yaw`. The values are Floats representing the angle of the axis in degrees.
 
 ```python
-from astro_pi import AstroPi
+from sense_hat import SenseHat
 
-ap = AstroPi()
-accel_only = ap.get_accelerometer()
+sense = SenseHat()
+accel_only = sense.get_accelerometer()
 print("p: {pitch}, r: {roll}, y: {yaw}".format(**accel_only))
 ```
 - - -
@@ -552,9 +550,9 @@ Returned type | Explanation
 Dictionary | A dictionary object indexed by the strings `x`, `y` and `z`. The values are Floats representing the acceleration intensity of the axis in **Gs**.
 
 ```python
-from astro_pi import AstroPi
+from sense_hat import SenseHat
 
-ap = AstroPi()
-raw = ap.get_accelerometer_raw()
+sense = SenseHat()
+raw = sense.get_accelerometer_raw()
 print("x: {x}, y: {y}, z: {z}".format(**raw))
 ```

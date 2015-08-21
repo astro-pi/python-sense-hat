@@ -1,19 +1,19 @@
 #!/usr/bin/python
+from sense_hat import SenseHat
 import os
 import time
 import pygame  # See http://www.pygame.org/docs
+from pygame.locals import *
+
 
 print("Press Escape to quit")
 time.sleep(1)
 
-from pygame.locals import *
-from astro_pi import AstroPi
-
 pygame.init()
 pygame.display.set_mode((640, 480))
 
-ap = AstroPi()
-ap.clear()  # Blank the LED matrix
+sense = SenseHat()
+sense.clear()  # Blank the LED matrix
 
 # 0, 0 = Top left
 # 7, 7 = Bottom right
@@ -26,7 +26,7 @@ CENTRE_PIXELS = [[3, 3], [4, 3], [3, 4], [4, 4]]
 
 def set_pixels(pixels, col):
     for p in pixels:
-        ap.set_pixel(p[0], p[1], col[0], col[1], col[2])
+        sense.set_pixel(p[0], p[1], col[0], col[1], col[2])
 
 
 def handle_event(event, colour):

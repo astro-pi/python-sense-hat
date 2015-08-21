@@ -1,8 +1,8 @@
-============
-Astro Pi HAT
-============
+=========
+Sense HAT
+=========
 
-Python module to control the Astro Pi / Sense HAT for the `Raspberry Pi`_ used in the `Astro Pi`_ mission - an education outreach programme for UK schools sending code experiments to the International Space Station.
+Python module to control the `Raspberry Pi`_ Sense HAT used in the `Astro Pi`_ mission - an education outreach programme for UK schools sending code experiments to the International Space Station.
 
 Installation
 ============
@@ -27,16 +27,16 @@ The rainbow pattern on the LED matrix should now turn off during boot up.
 Usage
 =====
 
-Import the Astro Pi module and instantiate an object::
+Import the sense_hat module and instantiate a SenseHat object::
 
-    from astro_pi import AstroPi
+    from sense_hat import SenseHat
 
-    ap = AstroPi()
+    sense = SenseHat()
 
 Documentation
 =============
 
-Comprehensive documentation is available at `pythonhosted.org/astro-pi`_
+Comprehensive documentation is available at `pythonhosted.org/sense-hat`_
 
 Contributors
 ============
@@ -53,7 +53,7 @@ Open Source
 
 .. _Raspberry Pi: https://www.raspberrypi.org/
 .. _Astro Pi: http://www.astro-pi.org/
-.. _pythonhosted.org/astro-pi: http://pythonhosted.org/astro-pi/
+.. _pythonhosted.org/sense-hat: http://pythonhosted.org/sense-hat/
 .. _Dave Honess: https://github.com/davidhoness
 .. _Ben Nuttall: https://github.com/bennuttall
 .. _BSD Licence: http://opensource.org/licenses/BSD-3-Clause

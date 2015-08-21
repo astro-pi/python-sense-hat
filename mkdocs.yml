@@ -1,7 +1,7 @@
-site_name: Astro Pi
+site_name: Sense HAT
 theme: readthedocs
-site_url: https://pythonhosted.org/astro_pi/
+site_url: https://pythonhosted.org/sense-hat/
 repo_url: https://github.com/astro-pi/astro-pi-hat
-site_description: UK Space Astro Pi Competition Python Library
+site_description: Python Library for the Sense HAT Raspberry Pi add-on board used in the Astro Pi mission
 site_author: David Honess
 site_dir: pythonhosted

@@ -1,8 +1,8 @@
 #!/usr/bin/python
 import time
-from astro_pi import AstroPi
+from sense_hat import SenseHat
 
-ap = AstroPi()
+sense = SenseHat()
 
 r = 255
 g = 0
@@ -35,6 +35,6 @@ def next_colour():
         b -= 1
 
 while True:
-    ap.clear([r, g, b])
+    sense.clear([r, g, b])
     msleep(2)
     next_colour()

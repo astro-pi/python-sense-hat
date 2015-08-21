@@ -1,6 +1,6 @@
 #!/usr/bin/python
-from astro_pi import AstroPi
+from sense_hat import SenseHat
 
-ap = AstroPi()
-ap.clear()
-ap.load_image("space_invader.png")
+sense = SenseHat()
+sense.clear()
+sense.load_image("space_invader.png")

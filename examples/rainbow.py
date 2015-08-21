@@ -1,8 +1,8 @@
 #!/usr/bin/python
 import time
-from astro_pi import AstroPi
+from sense_hat import SenseHat
 
-ap = AstroPi()
+sense = SenseHat()
 
 pixels = [
     [255, 0, 0], [255, 0, 0], [255, 87, 0], [255, 196, 0], [205, 255, 0], [95, 255, 0], [0, 255, 13], [0, 255, 122],
@@ -49,5 +49,5 @@ while True:
     for pix in pixels:
         next_colour(pix)
 
-    ap.set_pixels(pixels)
+    sense.set_pixels(pixels)
     msleep(2)
