@@ -9,12 +9,20 @@ import shutil
 import glob
 import RTIMU  # custom version
 import pwd
+import array
+import fcntl
 from PIL import Image  # pillow
 
 
 class SenseHat(object):
 
     SENSE_HAT_FB_NAME = 'RPi-Sense FB'
+    SENSE_HAT_FB_FBIOGET_GAMMA = 61696
+    SENSE_HAT_FB_FBIOSET_GAMMA = 61697
+    SENSE_HAT_FB_FBIORESET_GAMMA = 61698
+    SENSE_HAT_FB_GAMMA_DEFAULT = 0
+    SENSE_HAT_FB_GAMMA_LOW = 1
+    SENSE_HAT_FB_GAMMA_USER = 2
     SETTINGS_HOME_PATH = '.config/sense_hat'
 
     def __init__(
@@ -171,6 +179,14 @@ class SenseHat(object):
     ####
     # LED Matrix
     ####
+
+    @property
+    def rotation(self):
+        return self._rotation
+
+    @rotation.setter
+    def rotation(self, r):
+        self.set_rotation(r, True)
 
     def set_rotation(self, r=0, redraw=True):
         """
@@ -464,6 +480,45 @@ class SenseHat(object):
         self.set_pixels(coloured_pixels)
         self._rotation = previous_rotation
 
+    @property
+    def gamma(self):
+        buffer = array.array('B', [0]*32) 
+        with open(self._fb_device) as f:
+            fcntl.ioctl(f, self.SENSE_HAT_FB_FBIOGET_GAMMA, buffer)
+        return list(buffer)
+
+    @gamma.setter
+    def gamma(self, buffer):
+        if len(buffer) is not 32:
+            raise ValueError('Gamma array must be of length 32')
+
+        if not all(b <= 31 for b in buffer):
+            raise ValueError('Gamma values must be bewteen 0 and 31')
+
+        if not isinstance(buffer, array.array):
+            buffer = array.array('B', buffer)
+
+        with open(self._fb_device) as f:
+            fcntl.ioctl(f, self.SENSE_HAT_FB_FBIOSET_GAMMA, buffer)
+
+    def gamma_reset(self):
+        """
+        Resets the LED matrix gamma correction to default
+        """
+
+        with open(self._fb_device) as f:
+            fcntl.ioctl(f, self.SENSE_HAT_FB_FBIORESET_GAMMA, self.SENSE_HAT_FB_GAMMA_DEFAULT)
+
+    @property
+    def low_light(self):
+        return self.gamma == [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 10, 10]
+
+    @low_light.setter
+    def low_light(self, value):
+        with open(self._fb_device) as f:
+            cmd = self.SENSE_HAT_FB_GAMMA_LOW if value else self.SENSE_HAT_FB_GAMMA_DEFAULT
+            fcntl.ioctl(f, self.SENSE_HAT_FB_FBIORESET_GAMMA, cmd)
+
     ####
     # Environmental sensors
     ####
@@ -500,6 +555,10 @@ class SenseHat(object):
             humidity = data[1]
         return humidity
 
+    @property
+    def humidity(self):
+        return self.get_humidity()
+
     def get_temperature_from_humidity(self):
         """
         Returns the temperature in Celsius from the humidity sensor
@@ -531,6 +590,14 @@ class SenseHat(object):
 
         return self.get_temperature_from_humidity()
 
+    @property
+    def temp(self):
+        return self.get_temperature_from_humidity()
+
+    @property
+    def temperature(self):
+        return self.get_temperature_from_humidity()
+
     def get_pressure(self):
         """
         Returns the pressure in Millibars
@@ -542,6 +609,10 @@ class SenseHat(object):
         if (data[0]):  # Pressure valid
             pressure = data[1]
         return pressure
+
+    @property
+    def pressure(self):
+        return self.get_pressure()
 
     ####
     # IMU Sensor
@@ -642,6 +713,10 @@ class SenseHat(object):
 
         return self._last_orientation
 
+    @property
+    def orientation_radians(self):
+        return self.get_orientation_radians()
+
     def get_orientation_degrees(self):
         """
         Returns a dictionary object to represent the current orientation
@@ -658,6 +733,10 @@ class SenseHat(object):
     def get_orientation(self):
         return self.get_orientation_degrees()
 
+    @property
+    def orientation(self):
+        return self.get_orientation_degrees()
+
     def get_compass(self):
         """
         Gets the direction of North from the magnetometer in degrees
@@ -669,6 +748,10 @@ class SenseHat(object):
             return orientation['yaw']
         else:
             return None
+
+    @property
+    def compass(self):
+        return self.get_compass()
 
     def get_compass_raw(self):
         """
@@ -682,6 +765,10 @@ class SenseHat(object):
 
         return self._last_compass_raw
 
+    @property
+    def compass_raw(self):
+        return self.get_compass_raw()
+
     def get_gyroscope(self):
         """
         Gets the orientation in degrees from the gyroscope only
@@ -689,6 +776,14 @@ class SenseHat(object):
 
         self.set_imu_config(False, True, False)
         return self.get_orientation_degrees()
+
+    @property
+    def gyro(self):
+        return self.get_gyroscope()
+
+    @property
+    def gyroscope(self):
+        return self.get_gyroscope()
 
     def get_gyroscope_raw(self):
         """
@@ -702,6 +797,14 @@ class SenseHat(object):
 
         return self._last_gyro_raw
 
+    @property
+    def gyro_raw(self):
+        return self.get_gyroscope_raw()
+
+    @property
+    def gyroscope_raw(self):
+        return self.get_gyroscope_raw()
+
     def get_accelerometer(self):
         """
         Gets the orientation in degrees from the accelerometer only
@@ -709,6 +812,14 @@ class SenseHat(object):
 
         self.set_imu_config(False, False, True)
         return self.get_orientation_degrees()
+
+    @property
+    def accel(self):
+        return self.get_accelerometer()
+
+    @property
+    def accelerometer(self):
+        return self.get_accelerometer()
 
     def get_accelerometer_raw(self):
         """
@@ -721,3 +832,11 @@ class SenseHat(object):
             self._last_accel_raw = raw
 
         return self._last_accel_raw
+
+    @property
+    def accel_raw(self):
+        return self.get_accelerometer_raw()
+
+    @property
+    def accelerometer_raw(self):
+        return self.get_accelerometer_raw()
