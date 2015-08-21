@@ -1,3 +1,10 @@
+python-sense-hat (2.0.0-1) jessie; urgency=low
+
+  * v2.0.0 release
+  * Rename to python-sense-hat
+
+ -- Serge Schneider <serge@raspberrypi.org>  Fri, 21 Aug 2015 19:36:23 +0100
+
 astropi (1.1.5-1) jessie; urgency=low
 
   * Initial release
