@@ -2,11 +2,14 @@
 
 ## v2
 
+### 2.1.0
+
+- Added gamma, low light and other properties
+
 ### 2.0.0
 
 - Library renamed from `astro_pi` to `sense_hat`
 - Class renamed from `AstroPi` to `SenseHat`
-- Added gamma, low light and other properties
 - API otherwise unchanged
 
 ## v1
