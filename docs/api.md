@@ -20,6 +20,8 @@ from sense_hat import SenseHat
 
 sense = SenseHat()
 sense.set_rotation(180)
+# alternatives
+sense.rotation = 180
 ```
 - - -
 ### flip_h
@@ -271,6 +273,72 @@ for i in reversed(range(0,10)):
     sense.show_letter(str(i))
     time.sleep(1)
 ```
+
+### low_light
+
+Toggles the LED matrix low light mode, useful if the Sense HAT is being used in a dark environment.
+
+```python
+import time
+from sense_hat import SenseHat
+
+sense = SenseHat()
+sense.clear(255, 255, 255)
+sense.low_light = True
+time.sleep(2)
+sense.low_light = False
+```
+
+### gamma
+
+For advanced users. Most users will just need the `low_light` Boolean property above. The Sense HAT python API uses 8 bit (0 to 255) colours for R, G, B. When these are written to the Linux frame buffer they're bit shifted into RGB 5 6 5. The driver then converts them to RGB 5 5 5 before it passes them over to the ATTiny88 AVR for writing to the LEDs.
+
+The gamma property allows you to specify a gamma lookup table for the [final 5](http://en.battlestarwiki.org/wiki/Final_Five) bits of colour used. The lookup table is a list of 32 numbers that must be between 0 and 31. The value of the incoming 5 bit colour is used to index the lookup table and the value found at that position is then written to the LEDs.
+
+Type | Valid values | Explanation
+--- | --- | ---
+Tuple or List | Tuple or List of length 32 containing Integers between 0 and 31 | Gamma lookup table for the final 5 bits of colour
+
+```python
+import time
+from sense_hat import SenseHat
+
+sense = SenseHat()
+sense.clear(255, 127, 0)
+
+print(sense.gamma)
+time.sleep(2)
+
+sense.gamma = reversed(sense.gamma)
+print(sense.gamma)
+time.sleep(2)
+
+sense.low_light = True
+print(sense.gamma)
+time.sleep(2)
+
+sense.low_light = False
+```
+
+### gamma_reset
+
+A function to reset the gamma lookup table to default, ideal if you've been messing with it and want to get it back to a default state.
+
+Returned type | Explanation
+--- | ---
+None |
+
+```python
+import time
+from sense_hat import SenseHat
+
+sense = SenseHat()
+sense.clear(255, 127, 0)
+time.sleep(2)
+sense.gamma = [0] * 32  # Will turn the LED matrix off
+time.sleep(2)
+sense.gamma_reset()
+```
 - - -
 ## Environmental sensors
 
@@ -288,6 +356,9 @@ from sense_hat import SenseHat
 sense = SenseHat()
 humidity = sense.get_humidity()
 print("Humidity: %s %%rH" % humidity)
+
+# alternatives
+print(sense.humidity)
 ```
 - - -
 ### get_temperature
@@ -300,6 +371,10 @@ from sense_hat import SenseHat
 sense = SenseHat()
 temp = sense.get_temperature()
 print("Temperature: %s C" % temp)
+
+# alternatives
+print(sense.temp)
+print(sense.temperature)
 ```
 - - -
 ### get_temperature_from_humidity
@@ -348,6 +423,9 @@ from sense_hat import SenseHat
 sense = SenseHat()
 pressure = sense.get_pressure()
 print("Pressure: %s Millibars" % pressure)
+
+# alternatives
+print(sense.pressure)
 ```
 - - -
 ## IMU Sensor
@@ -395,6 +473,9 @@ from sense_hat import SenseHat
 sense = SenseHat()
 orientation_rad = sense.get_orientation_radians()
 print("p: {pitch}, r: {roll}, y: {yaw}".format(**orientation_rad))
+
+# alternatives
+print(sense.orientation_radians)
 ```
 - - -
 ### get_orientation_degrees
@@ -423,6 +504,9 @@ from sense_hat import SenseHat
 sense = SenseHat()
 orientation = sense.get_orientation()
 print("p: {pitch}, r: {roll}, y: {yaw}".format(**orientation))
+
+# alternatives
+print(sense.orientation)
 ```
 - - -
 ### get_compass
@@ -439,6 +523,9 @@ from sense_hat import SenseHat
 sense = SenseHat()
 north = sense.get_compass()
 print("North: %s" % north)
+
+# alternatives
+print(sense.compass)
 ```
 - - -
 ### get_compass_raw
@@ -455,6 +542,9 @@ from sense_hat import SenseHat
 sense = SenseHat()
 raw = sense.get_compass_raw()
 print("x: {x}, y: {y}, z: {z}".format(**raw))
+
+# alternatives
+print(sense.compass_raw)
 ```
 - - -
 ### get_gyroscope
@@ -471,6 +561,10 @@ from sense_hat import SenseHat
 sense = SenseHat()
 gyro_only = sense.get_gyroscope()
 print("p: {pitch}, r: {roll}, y: {yaw}".format(**gyro_only))
+
+# alternatives
+print(sense.gyro)
+print(sense.gyroscope)
 ```
 - - -
 ### get_gyroscope_raw
@@ -487,6 +581,10 @@ from sense_hat import SenseHat
 sense = SenseHat()
 raw = sense.get_gyroscope_raw()
 print("x: {x}, y: {y}, z: {z}".format(**raw))
+
+# alternatives
+print(sense.gyro_raw)
+print(sense.gyroscope_raw)
 ```
 - - -
 ### get_accelerometer
@@ -503,6 +601,10 @@ from sense_hat import SenseHat
 sense = SenseHat()
 accel_only = sense.get_accelerometer()
 print("p: {pitch}, r: {roll}, y: {yaw}".format(**accel_only))
+
+# alternatives
+print(sense.accel)
+print(sense.accelerometer)
 ```
 - - -
 ### get_accelerometer_raw
@@ -519,4 +621,8 @@ from sense_hat import SenseHat
 sense = SenseHat()
 raw = sense.get_accelerometer_raw()
 print("x: {x}, y: {y}, z: {z}".format(**raw))
+
+# alternatives
+print(sense.accel_raw)
+print(sense.accelerometer_raw)
 ```
