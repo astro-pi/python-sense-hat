@@ -13,12 +13,13 @@ sense.clear()  # Blank the LED matrix
 found = False;
 devices = [InputDevice(fn) for fn in list_devices()]
 for dev in devices:
-  if dev.name == 'Raspberry Pi Sense HAT Joystick':
-    found = True;
-    break
+    if dev.name == 'Raspberry Pi Sense HAT Joystick':
+        found = True;
+        break
+
 if not(found):
-  print('Raspberry Pi Sense HAT Joystick not found. Aborting ...')
-  exit()
+    print('Raspberry Pi Sense HAT Joystick not found. Aborting ...')
+    sys.exit()
 
 # 0, 0 = Top left
 # 7, 7 = Bottom right
