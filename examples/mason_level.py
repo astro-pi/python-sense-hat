@@ -20,8 +20,8 @@ def main():
     prev_y = -1
     while True:
         acc = sense.get_accelerometer_raw()
-        x = limit(round(-10 * acc['x'] + 3))
-        y = limit(round(-10 * acc['y'] + 3))
+        x = round(limit(-10 * acc['x'] + 3))
+        y = round(limit(-10 * acc['y'] + 3))
         if x != prev_x or y != prev_y:
             sense.clear()
         sense.set_pixel(x, y, *color)
