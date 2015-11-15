@@ -23,6 +23,12 @@ sudo apt-get install sense-hat
 sudo pip-3.2 install pillow
 ```
 
+**Note** If you are installing the Sense HAT software on Wheezy, you will need to enter the following command before installing pillow. 
+
+```bash
+sudo apt-get install libjpeg-dev
+```
+
 ## Usage
 
 Hello world example:
