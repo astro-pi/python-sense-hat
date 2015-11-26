@@ -1,6 +1,8 @@
 #!/usr/bin/python
 import sys
 import time
+import sys
+sys.path.insert(1, '/home/pi/python-sense-hat')
 from sense_hat import SenseHat
 from evdev import InputDevice, list_devices, ecodes
 

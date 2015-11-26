@@ -1,6 +1,8 @@
 #!/usr/bin/python
 import sys
 import time
+import sys
+sys.path.insert(1, '/home/pi/python-sense-hat')
 from sense_hat import SenseHat
 
 X = (255, 0, 0)
@@ -30,3 +32,4 @@ while True:
     for r in [0, 90, 180, 270]:
         sense.set_rotation(r)
         time.sleep(0.3)
+
