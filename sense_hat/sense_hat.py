@@ -77,36 +77,36 @@ class SenseHat(object):
         show_message function below
         """
 
-        text_pixels = list(self.load_image(text_image_file, False))
+        #text_pixels = list(self.load_image(text_image_file, False))
+        text_pixels = self.load_image(text_image_file, False)
+        text_pixels = text_pixels.reshape(-1, 5, 8, 3)
         with open(text_file, 'r') as f:
             loaded_text = f.read()
         self._text_dict = {}
-        for index, s in enumerate(loaded_text):
-            start = index * 40
-            end = start + 40
-            char = text_pixels[start:end]
-            self._text_dict[s] = char
+        for i, s in enumerate(loaded_text):
+            #start = i * 40
+            #end = start + 40
+            #char = text_pixels[start:end]
+            self._text_dict[s] = text_pixels[i]
 
     def _trim_whitespace(self, char):  # For loading text assets only
         """
         Internal. Trims white space pixels from the front and back of loaded
         text characters
-        """
+        
 
-        psum = lambda x: sum(sum(x, []))
-        if psum(char) > 0:
-            is_empty = True
-            while is_empty:  # From front
-                row = char[0:8]
-                is_empty = psum(row) == 0
-                if is_empty:
-                    del char[0:8]
-            is_empty = True
-            while is_empty:  # From back
-                row = char[-8:]
-                is_empty = psum(row) == 0
-                if is_empty:
-                    del char[-8:]
+        char is a numpy array shape (5, 8, 3)"""
+        
+        if char.sum() > 0:
+            for i in range(5):
+                if char[i].sum() > 0:
+                    break
+            slice_from = i
+            for i in range(4, -1, -1):
+                if char[i].sum() > 0:
+                    break
+            slice_to = i + 1
+            return char[slice_from:slice_to]
         return char
 
     def _get_settings_file(self, imu_settings_file):
@@ -341,16 +341,14 @@ class SenseHat(object):
             raise IOError('%s not found' % file_path)
 
         img = Image.open(file_path).convert('RGB')
-        print(list(map(list, img.getdata()))[25:50])
         sz = img.size[0]
-        if (sz == img.size[1] and (sz / 8.0) == int(sz / 8.0)):
+        if sz == img.size[1]: # square image -> scale to 8x8
             img.thumbnail((8, 8), Image.ANTIALIAS) 
         pixel_list = np.array(img)        
 
         if redraw:
             self.set_pixels(pixel_list)
-        print(pixel_list.reshape(-1, 3)[25:50])
-        return pixel_list.reshape(-1, 3)
+        return pixel_list.reshape(-1, 3) # in case existing apps use old shape
 
     def clear(self, *args):
         """
@@ -384,9 +382,9 @@ class SenseHat(object):
         """
 
         if len(s) == 1 and s in self._text_dict.keys():
-            return list(self._text_dict[s])
+            return self._text_dict[s]
         else:
-            return list(self._text_dict['?'])
+            return self._text_dict['?']
 
     def show_message(
             self,
@@ -406,27 +404,22 @@ class SenseHat(object):
         self._rotation -= 90
         if self._rotation < 0:
             self._rotation = 270
-        dummy_colour = [None, None, None]
-        string_padding = [dummy_colour] * 64
-        letter_padding = [dummy_colour] * 8
+        string_padding = np.zeros((8, 8, 3), np.uint16)
+        letter_padding = np.zeros((1, 8, 3), np.uint16)
         # Build pixels from dictionary
-        scroll_pixels = []
-        scroll_pixels.extend(string_padding)
+        scroll_pixels = np.copy(string_padding)
         for s in text_string:
-            scroll_pixels.extend(self._trim_whitespace(self._get_char_pixels(s)))
-            scroll_pixels.extend(letter_padding)
-        scroll_pixels.extend(string_padding)
-        # Recolour pixels as necessary
-        coloured_pixels = [
-            text_colour if pixel == [255, 255, 255] else back_colour
-            for pixel in scroll_pixels
-        ]
-        # Shift right by 8 pixels per frame to scroll
-        scroll_length = len(coloured_pixels) // 8
+            scroll_pixels = np.append(scroll_pixels, self._trim_whitespace(self._get_char_pixels(s)), axis=0)
+            scroll_pixels = np.append(scroll_pixels, letter_padding, axis=0)
+        scroll_pixels = np.append(scroll_pixels, string_padding, axis=0)
+        # Recolour pixels as necessary - first get indices of drawn pixels
+        f_px = np.where(scroll_pixels[:,:] == np.array([255, 255, 255]))
+        scroll_pixels[:,:] = back_colour
+        scroll_pixels[f_px[0], f_px[1]] = np.array(text_colour)
+        # Then scroll and repeatedly set the pixels
+        scroll_length = len(scroll_pixels)
         for i in range(scroll_length - 8):
-            start = i * 8
-            end = start + 64
-            self.set_pixels(coloured_pixels[start:end])
+            self.set_pixels(scroll_pixels[i:i+8])
             time.sleep(scroll_speed)
         self._rotation = previous_rotation
 
@@ -449,15 +442,14 @@ class SenseHat(object):
         self._rotation -= 90
         if self._rotation < 0:
             self._rotation = 270
-        dummy_colour = [None, None, None]
-        pixel_list = [dummy_colour] * 8
-        pixel_list.extend(self._get_char_pixels(s))
-        pixel_list.extend([dummy_colour] * 16)
-        coloured_pixels = [
-            text_colour if pixel == [255, 255, 255] else back_colour
-            for pixel in pixel_list
-        ]
-        self.set_pixels(coloured_pixels)
+        pixel_list = np.zeros((8,8,3), np.uint16)
+        pixel_list[1:6] = self._get_char_pixels(s)
+        # Recolour pixels as necessary - first get indices of drawn pixels
+        f_px = np.where(pixel_list[:,:] == np.array([255, 255, 255]))
+        pixel_list[:,:] = back_colour
+        pixel_list[f_px[0], f_px[1]] = text_colour
+        # Finally set pixels
+        self.set_pixels(pixel_list)
         self._rotation = previous_rotation
 
     @property

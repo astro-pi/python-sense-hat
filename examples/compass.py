@@ -1,7 +1,5 @@
 #!/usr/bin/python
 import sys
-import sys
-sys.path.insert(1, '/home/pi/python-sense-hat')
 from sense_hat import SenseHat
 
 # To get good results with the magnetometer you must first calibrate it using
