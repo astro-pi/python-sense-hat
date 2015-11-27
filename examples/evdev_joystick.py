@@ -1,7 +1,7 @@
 #!/usr/bin/python
 import sys
 import time
-import sys
+from sense_hat import SenseHat
 from evdev import InputDevice, list_devices, ecodes
 
 print("Press Ctrl-C to quit")

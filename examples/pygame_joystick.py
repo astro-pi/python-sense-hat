@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import sys
+from sense_hat import SenseHat
 import os
 import time
 import pygame  # See http://www.pygame.org/docs
