@@ -181,6 +181,9 @@ class SenseHat(object):
             raise ValueError('Rotation must be 0, 90, 180 or 270 degrees')
 
     def _xy_rotated(self, x, y):
+        """ returns the offset value of the x,y location in the flattened
+        form of the array as saved to fb_device stream, adjusting for rotation
+        """
         if self._rotation == 0:
             return x + 8 * y
         elif self._rotation == 90:
