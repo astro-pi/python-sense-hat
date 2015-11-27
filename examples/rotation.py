@@ -1,7 +1,7 @@
 #!/usr/bin/python
 import sys
 import time
-import sys
+from sense_hat import SenseHat
 
 X = (255, 0, 0)
 O = (255, 255, 255)
