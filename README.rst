@@ -26,20 +26,20 @@ Installation
 
 To install the Sense HAT software, enter the following commands in a terminal.
 
-**Raspbian**:: the Sense HAT library is available from the repositories::
+**Raspbian**: the Sense HAT library is available from the repositories::
 
     sudo apt-get update
     sudo apt-get install sense-hat
     sudo pip-3.2 install pillow
     sudo reboot
 
-**ArchlinuxARM**:: the Sense HAT library is available in the Arch User Repository::
+**ArchlinuxARM**: the Sense HAT library is available in the Arch User Repository::
 
     pacaur -Syu
     pacaur -S python-sense-hat
     sudo reboot
 
-**From source**:: the following dependencies are required::
+**From source**: the following dependencies are required:
 
 * python
 * python-pillow
