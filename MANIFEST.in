@@ -1,5 +1,5 @@
 include README.rst
 include CONTRIBUTING.md
-include LICENCE.txt
+include LICENSE.txt
 include sense_hat/sense_hat_text.png
 include sense_hat/sense_hat_text.txt

@@ -15,13 +15,32 @@ The Sense HAT features an 8x8 RGB LED matrix, a mini joystick and the following 
 
 ## Install
 
-Install the Sense HAT software by opening a Terminal window and entering the following commands (while connected to the Internet):
+Install the Sense HAT software by opening a Terminal window and entering the following commands (while connected to the Internet).
+
+**Raspbian**: the Sense HAT library is available from the repositories:
 
 ```bash
 sudo apt-get update
 sudo apt-get install sense-hat
 sudo pip-3.2 install pillow
+sudo reboot
 ```
+
+**ArchlinuxARM**: the Sense HAT library is available in the Arch User Repository:
+
+```bash
+pacaur -Syu
+pacaur -S python-sense-hat
+sudo reboot
+```
+
+**From source**: the following dependencies are required:
+
+- python
+- python-pillow
+- python-setuptools
+- python-numpy
+- [python-rtimulib](https://github.com/RPi-Distro/RTIMULib/tree/master/Linux/python)
 
 ## Usage
 

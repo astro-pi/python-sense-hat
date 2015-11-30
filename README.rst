@@ -24,12 +24,28 @@ Coming soon
 Installation
 ============
 
-To install the Sense HAT software, enter the following commands in a terminal::
+To install the Sense HAT software, enter the following commands in a terminal.
+
+**Raspbian**: the Sense HAT library is available from the repositories::
 
     sudo apt-get update
     sudo apt-get install sense-hat
     sudo pip-3.2 install pillow
     sudo reboot
+
+**ArchlinuxARM**: the Sense HAT library is available in the Arch User Repository::
+
+    pacaur -Syu
+    pacaur -S python-sense-hat
+    sudo reboot
+
+**From source**: the following dependencies are required:
+
+* python
+* python-pillow
+* python-setuptools
+* python-numpy
+* `python-rtimulib`_
 
 Usage
 =====
@@ -62,6 +78,7 @@ Open Source
 .. _Raspberry Pi: https://www.raspberrypi.org/
 .. _Astro Pi: http://www.astro-pi.org/
 .. _pythonhosted.org/sense-hat: http://pythonhosted.org/sense-hat/
+.. _python-rtimulib: https://github.com/RPi-Distro/RTIMULib/tree/master/Linux/python
 .. _Dave Honess: https://github.com/davidhoness
 .. _Ben Nuttall: https://github.com/bennuttall
 .. _Serge Schneider: https://github.com/XECDesign
