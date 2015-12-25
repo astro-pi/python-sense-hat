@@ -593,7 +593,7 @@ Calls `set_imu_config` to disable the magnetometer and gyroscope then gets the c
 
 Returned type | Explanation
 --- | ---
-Dictionary | A dictionary object indexed by the strings `pitch`, `roll` and `yaw`. The values are Floats representing the angle of the axis in degrees.
+Dictionary | A dictionary object indexed by the strings `x`, `y` and `z`. The values are Floats representing the acceleration intensity of the axis in **Gs**
 
 ```python
 from sense_hat import SenseHat
