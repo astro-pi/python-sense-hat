@@ -430,7 +430,7 @@ print(sense.pressure)
 - - -
 ## IMU Sensor
 
-The IMU (inertial measurement unit) sensor is a combination of three sensors, each with an x, y and z axis. For this reason it's considered be a 9 dof (degrees of freedom) sensor.
+The IMU (inertial measurement unit) sensor is a combination of three sensors, each with an x, y and z axis. For this reason it's considered to be a 9 dof (degrees of freedom) sensor.
 
 - Gyroscope
 - Accelerometer
