@@ -1,0 +1,9 @@
+[Unit]
+Description=Event handler for RPi SenseHat joystick
+
+[Service]
+ExecStart=/usr/local/bin/joystick-handler
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

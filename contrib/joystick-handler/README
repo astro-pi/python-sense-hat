@@ -1,0 +1,19 @@
+Event handlers for Sense Hat joystick clicks.
+
+This event handler provides a UNIX-y interface to react to Sense Hat joystick
+events.
+
+A daemon (bin/joystick-handler) listens for joystick events using the evdev
+Python library. When an event is fired, hooks in the form of executable
+programs are executed and passed two command line arguments: STATE first (one
+of: press, hold, release) and KEY second (one of: up, down, left, right, push).
+
+Hooks are located in suitable /etc directories, e.g., /etc/joystick.d/press/up/
+and executed using run-parts (8). See etc/joystick.d/ for a sample /etc
+configuration directory hierarchy and etc/joystick.d/press/hello for a sample
+hook.
+
+A systemd unit file (etc/systemd/system/joystick-handler.service) is provided
+to start the joystick handler at boot and restart it if needed.
+
+ -- Stefano Zacchiroli <zack@upsilon.cc>  Mon, 22 Feb 2016 11:25:58 +0100
