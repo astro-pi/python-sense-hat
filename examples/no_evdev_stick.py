@@ -4,7 +4,7 @@ from sense_hat import SenseStick, SenseHat
 import sys
 
 """
-    An implementation of evdev_joystick.py using SenseStick for input.
+    An implementation of evdev_joystick.py without evdev.
 """
 
 
