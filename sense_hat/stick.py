@@ -73,8 +73,8 @@ class SenseStick(object):
     def read(self):
         return next(iter(self))
 
-    def wait(self, timeout=None):
-        # XXX Use poll() instead?
+    def wait(self, timeout=0):
+        # Timeout of 0 means poll.
         r, w, x = select.select([self._stick_file], [], [], timeout)
         return bool(r)
 
