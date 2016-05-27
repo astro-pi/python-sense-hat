@@ -146,21 +146,18 @@ class ClickStick(SenseStick):
     def _on_right(self):
         """Internal. Set by on_right and called by .listen"""
         r = sense.rotation
-        sense.set_rotation((r + 180) % 360)    
-        sense.show_message("<=")
-        sense.set_rotation(r)
+        self.sense.set_rotation((r + 180) % 360)    
+        self.sense.show_message("<=")
+        self.sense.set_rotation(r)
 
     def _on_left(self):
         """Internal. Set by on_left and called by .listen"""
-        sense.show_message("<=")
+        self.sense.show_message("<=")
 
     def _on_click(self):
         """Internal. Set by on_click and called by .listen"""
-        r = random.randint(48,255)
-        g = random.randint(48,255)
-        b = random.randint(48,255)
-        self.sense.clear((r, g, b))
-
+        self.sense.show_message("Click!")
+        
     def on_up(self, func):
         """Takes a func and sets that to be called when the
         listen method detects a joystick down press"""
