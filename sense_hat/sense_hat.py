@@ -12,6 +12,7 @@ import pwd
 import array
 import fcntl
 from PIL import Image  # pillow
+from copy import deepcopy
 
 
 class SenseHat(object):
@@ -77,9 +78,9 @@ class SenseHat(object):
         self._humidity_init = False  # Will be initialised as and when needed
         self._last_orientation = {'pitch': 0, 'roll': 0, 'yaw': 0}
         raw = {'x': 0, 'y': 0, 'z': 0}
-        self._last_compass_raw = raw
-        self._last_gyro_raw = raw
-        self._last_accel_raw = raw
+        self._last_compass_raw = deepcopy(raw)
+        self._last_gyro_raw = deepcopy(raw)
+        self._last_accel_raw = deepcopy(raw)
         self._compass_enabled = False
         self._gyro_enabled = False
         self._accel_enabled = False
@@ -482,7 +483,7 @@ class SenseHat(object):
 
     @property
     def gamma(self):
-        buffer = array.array('B', [0]*32) 
+        buffer = array.array('B', [0]*32)
         with open(self._fb_device) as f:
             fcntl.ioctl(f, self.SENSE_HAT_FB_FBIOGET_GAMMA, buffer)
         return list(buffer)
@@ -711,7 +712,7 @@ class SenseHat(object):
             raw['yaw'] = raw.pop('z')
             self._last_orientation = raw
 
-        return self._last_orientation
+        return deepcopy(self._last_orientation)
 
     @property
     def orientation_radians(self):
@@ -763,7 +764,7 @@ class SenseHat(object):
         if raw is not None:
             self._last_compass_raw = raw
 
-        return self._last_compass_raw
+        return deepcopy(self._last_compass_raw)
 
     @property
     def compass_raw(self):
@@ -795,7 +796,7 @@ class SenseHat(object):
         if raw is not None:
             self._last_gyro_raw = raw
 
-        return self._last_gyro_raw
+        return deepcopy(self._last_gyro_raw)
 
     @property
     def gyro_raw(self):
@@ -831,7 +832,7 @@ class SenseHat(object):
         if raw is not None:
             self._last_accel_raw = raw
 
-        return self._last_accel_raw
+        return deepcopy(self._last_accel_raw)
 
     @property
     def accel_raw(self):
