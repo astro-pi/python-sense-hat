@@ -648,7 +648,7 @@ class SenseHat(object):
         if (not isinstance(compass_enabled, bool)
         or not isinstance(gyro_enabled, bool)
         or not isinstance(accel_enabled, bool)):
-            raise TypeError('All set_imu_config parameters must be of boolan type')
+            raise TypeError('All set_imu_config parameters must be of boolean type')
 
         if self._compass_enabled != compass_enabled:
             self._compass_enabled = compass_enabled
