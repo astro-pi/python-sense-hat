@@ -19,7 +19,15 @@ The Sense HAT features an 8x8 RGB LED matrix, a mini joystick and the following 
 Buy
 ===
 
-Coming soon
+Buy the Sense HAT from:
+
+* `The Pi Hut`_
+* `Pimoroni`_
+* `Amazon (UK)`_
+* `element14`_
+* `adafruit`_
+* `Amazon (USA)`_
+
 
 Installation
 ============
@@ -67,3 +75,9 @@ Open Source
 .. _BSD Licence: http://opensource.org/licenses/BSD-3-Clause
 .. _GitHub: https://github.com/RPi-Distro/python-sense-hat
 .. _GitHub Issues: https://github.com/RPi-Distro/python-sense-hat/issues
+.. _`The Pi Hut`: http://thepihut.com/products/raspberry-pi-sense-hat-astro-pi
+.. _`Pimoroni`: https://shop.pimoroni.com/products/raspberry-pi-sense-hat
+.. _`Amazon (UK)`: http://www.amazon.co.uk/Raspberry-Pi-2483095-Sense-HAT/dp/B014T2IHQ8/
+.. _element14: https://www.element14.com/community/docs/DOC-78155/l/raspberry-pi-sense-hat
+.. _adafruit: https://www.adafruit.com/products/2738
+.. _Amazon (USA): http://www.amazon.com/Raspberry-Pi-Sense-HAT-AstroPi/dp/B014HDG74S
