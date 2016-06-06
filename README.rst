@@ -58,6 +58,8 @@ Contributors
 * `Dave Honess`_
 * `Ben Nuttall`_
 * `Serge Schneider`_
+* `Dave Jones`_
+* `Tyler Laws`_
 
 Open Source
 ===========
@@ -72,6 +74,8 @@ Open Source
 .. _Dave Honess: https://github.com/davidhoness
 .. _Ben Nuttall: https://github.com/bennuttall
 .. _Serge Schneider: https://github.com/XECDesign
+.. _Dave Jones: https://github.com/waveform80
+.. _Tyler Laws: https://github.com/tyler-laws
 .. _BSD Licence: http://opensource.org/licenses/BSD-3-Clause
 .. _GitHub: https://github.com/RPi-Distro/python-sense-hat
 .. _GitHub Issues: https://github.com/RPi-Distro/python-sense-hat/issues
