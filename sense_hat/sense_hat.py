@@ -36,6 +36,9 @@ class SenseHat(object):
         if self._fb_device is None:
             raise OSError('Cannot detect %s device' % self.SENSE_HAT_FB_NAME)
 
+        if not glob.glob('/dev/i2c*'):
+            raise OSError('Cannot access I2C. Please ensure I2C is enabled in raspi-config')
+
         # 0 is With B+ HDMI port facing downwards
         pix_map0 = np.array([
              [0,  1,  2,  3,  4,  5,  6,  7],
@@ -532,7 +535,7 @@ class SenseHat(object):
         if not self._humidity_init:
             self._humidity_init = self._humidity.humidityInit()
             if not self._humidity_init:
-                raise OSError('Humidity Init Failed, please run as root / use sudo')
+                raise OSError('Humidity Init Failed')
 
     def _init_pressure(self):
         """
@@ -542,7 +545,7 @@ class SenseHat(object):
         if not self._pressure_init:
             self._pressure_init = self._pressure.pressureInit()
             if not self._pressure_init:
-                raise OSError('Pressure Init Failed, please run as root / use sudo')
+                raise OSError('Pressure Init Failed')
 
     def get_humidity(self):
         """
@@ -631,7 +634,7 @@ class SenseHat(object):
                 # Enable everything on IMU
                 self.set_imu_config(True, True, True)
             else:
-                raise OSError('IMU Init Failed, please run as root / use sudo')
+                raise OSError('IMU Init Failed')
 
     def set_imu_config(self, compass_enabled, gyro_enabled, accel_enabled):
         """
