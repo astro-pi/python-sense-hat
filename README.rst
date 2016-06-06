@@ -28,7 +28,6 @@ To install the Sense HAT software, enter the following commands in a terminal::
 
     sudo apt-get update
     sudo apt-get install sense-hat
-    sudo pip-3.2 install pillow
     sudo reboot
 
 Usage
