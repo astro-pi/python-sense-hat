@@ -23,6 +23,7 @@ sense.set_rotation(180)
 # alternatives
 sense.rotation = 180
 ```
+
 - - -
 ### flip_h
 
@@ -42,6 +43,7 @@ from sense_hat import SenseHat
 sense = SenseHat()
 sense.flip_h()
 ```
+
 - - -
 ### flip_v
 
@@ -61,6 +63,7 @@ from sense_hat import SenseHat
 sense = SenseHat()
 sense.flip_v()
 ```
+
 - - -
 ### set_pixels
 
@@ -95,6 +98,7 @@ O, O, O, X, O, O, O, O
 
 sense.set_pixels(question_mark)
 ```
+
 - - -
 ### get_pixels
 
@@ -112,6 +116,7 @@ pixel_list = sense.get_pixels()
 Note: You will notice that the pixel values you pass into `set_pixels` sometimes change when you read them back with  `get_pixels`. This is because we specify each pixel element as 8 bit numbers (0 to 255) but when they're passed into the Linux frame buffer for the LED matrix the numbers are bit shifted down to fit into RGB 565. 5 bits for red, 6 bits for green and 5 bits for blue. The loss of binary precision when performing this conversion (3 bits lost for red, 2 for green and 3 for blue) accounts for the discrepancies you see.
 
 The `get_pixels` function provides a correct representation of how the pixels end up in frame buffer memory after you've called `set_pixels`.
+
 - - -
 ### set_pixel
 
@@ -152,6 +157,7 @@ sense.set_pixel(0, 0, red)
 sense.set_pixel(0, 0, green)
 sense.set_pixel(0, 0, blue)
 ```
+
 - - -
 ### get_pixel
 
@@ -172,6 +178,7 @@ top_left_pixel = sense.get_pixel(0, 0)
 ```
 
 Note: Please read the note under `get_pixels`
+
 - - -
 ### load_image
 
@@ -199,6 +206,7 @@ from sense_hat import SenseHat
 sense = SenseHat()
 invader_pixels = sense.load_image("space_invader.png", redraw=False)
 ```
+
 - - -
 ### clear
 
@@ -226,6 +234,7 @@ sense.clear(red)  # passing in an RGB tuple
 sleep(1)
 sense.clear(255, 255, 255)  # passing in r, g and b values of a colour
 ```
+
 - - -
 ### show_message
 
@@ -248,6 +257,7 @@ from sense_hat import SenseHat
 sense = SenseHat()
 sense.show_message("One small step for Pi!", text_colour=[255, 0, 0])
 ```
+
 - - -
 ### show_letter
 
@@ -339,6 +349,7 @@ sense.gamma = [0] * 32  # Will turn the LED matrix off
 time.sleep(2)
 sense.gamma_reset()
 ```
+
 - - -
 ## Environmental sensors
 
@@ -360,6 +371,7 @@ print("Humidity: %s %%rH" % humidity)
 # alternatives
 print(sense.humidity)
 ```
+
 - - -
 ### get_temperature
 
@@ -376,6 +388,7 @@ print("Temperature: %s C" % temp)
 print(sense.temp)
 print(sense.temperature)
 ```
+
 - - -
 ### get_temperature_from_humidity
 
@@ -392,6 +405,7 @@ sense = SenseHat()
 temp = sense.get_temperature_from_humidity()
 print("Temperature: %s C" % temp)
 ```
+
 - - -
 ### get_temperature_from_pressure
 
@@ -408,6 +422,7 @@ sense = SenseHat()
 temp = sense.get_temperature_from_pressure()
 print("Temperature: %s C" % temp)
 ```
+
 - - -
 ### get_pressure
 
@@ -427,6 +442,7 @@ print("Pressure: %s Millibars" % pressure)
 # alternatives
 print(sense.pressure)
 ```
+
 - - -
 ## IMU Sensor
 
@@ -458,6 +474,7 @@ from sense_hat import SenseHat
 sense = SenseHat()
 sense.set_imu_config(False, True, False)  # gyroscope only
 ```
+
 - - -
 ### get_orientation_radians
 
@@ -477,6 +494,7 @@ print("p: {pitch}, r: {roll}, y: {yaw}".format(**orientation_rad))
 # alternatives
 print(sense.orientation_radians)
 ```
+
 - - -
 ### get_orientation_degrees
 
@@ -493,6 +511,7 @@ sense = SenseHat()
 orientation = sense.get_orientation_degrees()
 print("p: {pitch}, r: {roll}, y: {yaw}".format(**orientation))
 ```
+
 - - -
 ### get_orientation
 
@@ -508,6 +527,7 @@ print("p: {pitch}, r: {roll}, y: {yaw}".format(**orientation))
 # alternatives
 print(sense.orientation)
 ```
+
 - - -
 ### get_compass
 
@@ -527,6 +547,7 @@ print("North: %s" % north)
 # alternatives
 print(sense.compass)
 ```
+
 - - -
 ### get_compass_raw
 
@@ -546,6 +567,7 @@ print("x: {x}, y: {y}, z: {z}".format(**raw))
 # alternatives
 print(sense.compass_raw)
 ```
+
 - - -
 ### get_gyroscope
 
@@ -566,6 +588,7 @@ print("p: {pitch}, r: {roll}, y: {yaw}".format(**gyro_only))
 print(sense.gyro)
 print(sense.gyroscope)
 ```
+
 - - -
 ### get_gyroscope_raw
 
@@ -586,6 +609,7 @@ print("x: {x}, y: {y}, z: {z}".format(**raw))
 print(sense.gyro_raw)
 print(sense.gyroscope_raw)
 ```
+
 - - -
 ### get_accelerometer
 
@@ -606,6 +630,7 @@ print("p: {pitch}, r: {roll}, y: {yaw}".format(**accel_only))
 print(sense.accel)
 print(sense.accelerometer)
 ```
+
 - - -
 ### get_accelerometer_raw
 
@@ -626,3 +651,126 @@ print("x: {x}, y: {y}, z: {z}".format(**raw))
 print(sense.accel_raw)
 print(sense.accelerometer_raw)
 ```
+
+- - -
+## Joystick
+
+### InputEvent
+
+A tuple describing a joystick event. Contains three named parameters:
+
+* `timestamp` - The time at which the event occurred, as a fractional number of seconds (the same format as the built-in `time` function)
+
+* `direction` - The direction the joystick was moved, as a string (`"up"`, `"down"`, `"left"`, `"right"`, `"push"`)
+
+* `action` - The action that occurred, as a string (`"pressed"`, `"released"`, `"held"`)
+
+This tuple type is used by several joystick methods either as the return type
+or the type of a parameter.
+
+- - -
+### wait_for_event
+
+Blocks execution until a joystick event occurs, then returns an `InputEvent`
+representing the event that occurred.
+
+```python
+from sense_hat import SenseHat
+from time import sleep
+
+sense = SenseHat()
+event = sense.stick.wait_for_event()
+print("The joystick was {} {}".format(event.action, event.direction))
+sleep(0.1)
+event = sense.stick.wait_for_event()
+print("The joystick was {} {}".format(event.action, event.direction))
+```
+
+In the above example, if you briefly push the joystick in a single direction
+you should see two events output: a pressed action and a released action.
+The optional *emptybuffer* can be used to flush any pending events before
+waiting for new events. Try the following script to see the difference:
+
+```python
+from sense_hat import SenseHat
+from time import sleep
+
+sense = SenseHat()
+event = sense.stick.wait_for_event()
+print("The joystick was {} {}".format(event.action, event.direction))
+sleep(0.1)
+event = sense.stick.wait_for_event(emptybuffer=True)
+print("The joystick was {} {}".format(event.action, event.direction))
+```
+
+- - -
+### get_events
+
+Returns a list of `InputEvent` tuples representing all events that have
+occurred since the last call to `get_events` or `wait_for_event`.
+
+```python
+from sense_hat import SenseHat
+
+sense = SenseHat()
+while True:
+    for event in sense.stick.get_events():
+        print("The joystick was {} {}".format(event.action, event.direction))
+```
+
+- - -
+### direction_up, direction_left, direction_right, direction_down, direction_middle, direction_any
+
+These attributes can be assigned a function which will be called whenever the
+joystick is pushed in the associated direction (or in any direction in the case
+of `direction_any`). The function assigned must either take no parameters or
+must take a single parameter which will be passed the associated `InputEvent`.
+
+```python
+from sense_hat import SenseHat, ACTION_PRESSED, ACTION_HELD, ACTION_RELEASED
+from signal import pause
+
+x = 3
+y = 3
+sense = SenseHat()
+
+def clamp(value, min_value=0, max_value=7):
+    return min(max_value, max(min_value, value))
+
+def pushed_up(event):
+    global y
+    if event.action != ACTION_RELEASED:
+        y = clamp(y - 1)
+
+def pushed_down(event):
+    global y
+    if event.action != ACTION_RELEASED:
+        y = clamp(y + 1)
+
+def pushed_left(event):
+    global x
+    if event.action != ACTION_RELEASED:
+        x = clamp(x - 1)
+
+def pushed_right(event):
+    global x
+    if event.action != ACTION_RELEASED:
+        x = clamp(x + 1)
+
+def refresh():
+    sense.clear()
+    sense.set_pixel(x, y, 255, 255, 255)
+
+sense.stick.direction_up = pushed_up
+sense.stick.direction_down = pushed_down
+sense.stick.direction_left = pushed_left
+sense.stick.direction_right = pushed_right
+sense.stick.direction_any = refresh
+refresh()
+pause()
+```
+
+Note that the `direction_any` event is always called *after* all other events
+making it an ideal hook for things like display refreshing (as in the example
+above).
+
