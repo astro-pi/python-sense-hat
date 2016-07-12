@@ -274,18 +274,18 @@ class SenseStick(object):
         self._start_stop_thread()
 
     @property
-    def direction_push(self):
+    def direction_middle(self):
         """
-        The function to be called when the joystick is pressed. The function
-        can either take a parameter which will be the `InputEvent` tuple that
-        has occurred, or the function can take no parameters at all.
+        The function to be called when the joystick middle click is pressed. The
+        function can either take a parameter which will be the `InputEvent` tuple
+        that has occurred, or the function can take no parameters at all.
 
         Assign `None` to prevent this event from being fired.
         """
         return self._callbacks.get(DIRECTION_MIDDLE)
 
-    @direction_push.setter
-    def direction_push(self, value):
+    @direction_middle.setter
+    def direction_middle(self, value):
         self._callbacks[DIRECTION_MIDDLE] = self._wrap_callback(value)
         self._start_stop_thread()
 
