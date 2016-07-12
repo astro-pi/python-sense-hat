@@ -14,6 +14,8 @@ import fcntl
 from PIL import Image  # pillow
 from copy import deepcopy
 
+from .stick import SenseStick
+
 
 class SenseHat(object):
 
@@ -87,6 +89,7 @@ class SenseHat(object):
         self._compass_enabled = False
         self._gyro_enabled = False
         self._accel_enabled = False
+        self._stick = SenseStick()
 
     ####
     # Text assets
@@ -179,6 +182,14 @@ class SenseHat(object):
                         break
 
         return device
+
+    ####
+    # Joystick
+    ####
+
+    @property
+    def stick(self):
+        return self._stick
 
     ####
     # LED Matrix
