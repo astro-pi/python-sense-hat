@@ -12,6 +12,9 @@ import pwd
 import array
 import fcntl
 from PIL import Image  # pillow
+from copy import deepcopy
+
+from .stick import SenseStick
 
 
 class SenseHat(object):
@@ -34,6 +37,9 @@ class SenseHat(object):
         self._fb_device = self._get_fb_device()
         if self._fb_device is None:
             raise OSError('Cannot detect %s device' % self.SENSE_HAT_FB_NAME)
+
+        if not glob.glob('/dev/i2c*'):
+            raise OSError('Cannot access I2C. Please ensure I2C is enabled in raspi-config')
 
         # 0 is With B+ HDMI port facing downwards
         pix_map0 = np.array([
@@ -77,12 +83,13 @@ class SenseHat(object):
         self._humidity_init = False  # Will be initialised as and when needed
         self._last_orientation = {'pitch': 0, 'roll': 0, 'yaw': 0}
         raw = {'x': 0, 'y': 0, 'z': 0}
-        self._last_compass_raw = raw
-        self._last_gyro_raw = raw
-        self._last_accel_raw = raw
+        self._last_compass_raw = deepcopy(raw)
+        self._last_gyro_raw = deepcopy(raw)
+        self._last_accel_raw = deepcopy(raw)
         self._compass_enabled = False
         self._gyro_enabled = False
         self._accel_enabled = False
+        self._stick = SenseStick()
 
     ####
     # Text assets
@@ -175,6 +182,14 @@ class SenseHat(object):
                         break
 
         return device
+
+    ####
+    # Joystick
+    ####
+
+    @property
+    def stick(self):
+        return self._stick
 
     ####
     # LED Matrix
@@ -482,7 +497,7 @@ class SenseHat(object):
 
     @property
     def gamma(self):
-        buffer = array.array('B', [0]*32) 
+        buffer = array.array('B', [0]*32)
         with open(self._fb_device) as f:
             fcntl.ioctl(f, self.SENSE_HAT_FB_FBIOGET_GAMMA, buffer)
         return list(buffer)
@@ -531,7 +546,7 @@ class SenseHat(object):
         if not self._humidity_init:
             self._humidity_init = self._humidity.humidityInit()
             if not self._humidity_init:
-                raise OSError('Humidity Init Failed, please run as root / use sudo')
+                raise OSError('Humidity Init Failed')
 
     def _init_pressure(self):
         """
@@ -541,7 +556,7 @@ class SenseHat(object):
         if not self._pressure_init:
             self._pressure_init = self._pressure.pressureInit()
             if not self._pressure_init:
-                raise OSError('Pressure Init Failed, please run as root / use sudo')
+                raise OSError('Pressure Init Failed')
 
     def get_humidity(self):
         """
@@ -630,7 +645,7 @@ class SenseHat(object):
                 # Enable everything on IMU
                 self.set_imu_config(True, True, True)
             else:
-                raise OSError('IMU Init Failed, please run as root / use sudo')
+                raise OSError('IMU Init Failed')
 
     def set_imu_config(self, compass_enabled, gyro_enabled, accel_enabled):
         """
@@ -647,7 +662,7 @@ class SenseHat(object):
         if (not isinstance(compass_enabled, bool)
         or not isinstance(gyro_enabled, bool)
         or not isinstance(accel_enabled, bool)):
-            raise TypeError('All set_imu_config parameters must be of boolan type')
+            raise TypeError('All set_imu_config parameters must be of boolean type')
 
         if self._compass_enabled != compass_enabled:
             self._compass_enabled = compass_enabled
@@ -711,7 +726,7 @@ class SenseHat(object):
             raw['yaw'] = raw.pop('z')
             self._last_orientation = raw
 
-        return self._last_orientation
+        return deepcopy(self._last_orientation)
 
     @property
     def orientation_radians(self):
@@ -763,7 +778,7 @@ class SenseHat(object):
         if raw is not None:
             self._last_compass_raw = raw
 
-        return self._last_compass_raw
+        return deepcopy(self._last_compass_raw)
 
     @property
     def compass_raw(self):
@@ -795,7 +810,7 @@ class SenseHat(object):
         if raw is not None:
             self._last_gyro_raw = raw
 
-        return self._last_gyro_raw
+        return deepcopy(self._last_gyro_raw)
 
     @property
     def gyro_raw(self):
@@ -831,7 +846,7 @@ class SenseHat(object):
         if raw is not None:
             self._last_accel_raw = raw
 
-        return self._last_accel_raw
+        return deepcopy(self._last_accel_raw)
 
     @property
     def accel_raw(self):

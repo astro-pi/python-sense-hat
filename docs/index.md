@@ -20,7 +20,7 @@ Install the Sense HAT software by opening a Terminal window and entering the fol
 ```bash
 sudo apt-get update
 sudo apt-get install sense-hat
-sudp pip-3.2 install pillow
+sudo reboot
 ```
 
 ## Usage
