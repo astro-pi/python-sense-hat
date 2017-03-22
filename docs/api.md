@@ -661,7 +661,7 @@ A tuple describing a joystick event. Contains three named parameters:
 
 * `timestamp` - The time at which the event occurred, as a fractional number of seconds (the same format as the built-in `time` function)
 
-* `direction` - The direction the joystick was moved, as a string (`"up"`, `"down"`, `"left"`, `"right"`, `"push"`)
+* `direction` - The direction the joystick was moved, as a string (`"up"`, `"down"`, `"left"`, `"right"`, `"middle"`)
 
 * `action` - The action that occurred, as a string (`"pressed"`, `"released"`, `"held"`)
 
