@@ -319,7 +319,7 @@ sense.clear(255, 127, 0)
 print(sense.gamma)
 time.sleep(2)
 
-sense.gamma = reversed(sense.gamma)
+sense.gamma = list(reversed(sense.gamma))
 print(sense.gamma)
 time.sleep(2)
 
