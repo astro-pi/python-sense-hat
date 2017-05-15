@@ -180,7 +180,7 @@ class SenseStick(object):
                 if callback:
                     callback(event)
 
-    def wait_for_event(self, emptybuffer=False):
+    def wait_for_event(self, emptybuffer=False, timeout=None):
         """
         Waits until a joystick event becomes available.  Returns the event, as
         an `InputEvent` tuple.
@@ -192,7 +192,7 @@ class SenseStick(object):
         if emptybuffer:
             while self._wait(0):
                 self._read()
-        while self._wait():
+        while self._wait(timeout=timeout):
             event = self._read()
             if event:
                 return event
