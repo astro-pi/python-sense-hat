@@ -11,6 +11,7 @@ import RTIMU  # custom version
 import pwd
 import array
 import fcntl
+import codecs
 from PIL import Image  # pillow
 from copy import deepcopy
 
@@ -97,7 +98,7 @@ class SenseHat(object):
 
     # Text asset files are rotated right through 90 degrees to allow blocks of
     # 40 contiguous pixels to represent one 5 x 8 character. These are stored
-    # in a 8 x 640 pixel png image with characters arranged adjacently
+    # in a 8 pixel-wide png image with characters arranged adjacently
     # Consequently we must rotate the pixel map left through 90 degrees to
     # compensate when drawing text
 
@@ -108,7 +109,7 @@ class SenseHat(object):
         """
 
         text_pixels = self.load_image(text_image_file, False)
-        with open(text_file, 'r') as f:
+        with codecs.open(text_file, 'r', 'UTF-8') as f:
             loaded_text = f.read()
         self._text_dict = {}
         for index, s in enumerate(loaded_text):
