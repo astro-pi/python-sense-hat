@@ -12,5 +12,5 @@ from .stick import (
     ACTION_RELEASED,
     ACTION_HELD,
     )
-
-__version__ = '2.2.0'
+from .tcs34725 import TCS34725, TCS34725 as ColourSensor
+__version__ = '2.3.0'
