@@ -15,7 +15,7 @@ from PIL import Image  # pillow
 from copy import deepcopy
 
 from .stick import SenseStick
-
+from .tcs34725 import TCS34725 as ColourSensor
 
 class SenseHat(object):
 
@@ -90,6 +90,7 @@ class SenseHat(object):
         self._gyro_enabled = False
         self._accel_enabled = False
         self._stick = SenseStick()
+        self._colour = ColourSensor()
 
     ####
     # Text assets
@@ -190,6 +191,14 @@ class SenseHat(object):
     @property
     def stick(self):
         return self._stick
+
+    ####
+    # Colour sensor
+    ####
+
+    @property
+    def colour(self):
+        return self._colour
 
     ####
     # LED Matrix
