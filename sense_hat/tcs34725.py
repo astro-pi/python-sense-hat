@@ -11,6 +11,29 @@ from time import sleep
 def i2c_enabled():
     return next(glob.iglob('/sys/bus/i2c/devices/*'), None) is not None
 
+def _raw_wrapper(register):
+    """
+    Returns a function that retrieves the sensor reading at `register`.
+    The CRGB readings are all retrieved from the sensor in an identical fashion.
+    This is a factory function that implements this retrieval method.
+    """
+    def get_raw(self):
+        value = self.bus.read_word_data(self.ADDR, register)
+        return value
+    return get_raw
+
+def _byte_wrapper(register):
+    """
+    Returns a function that retrieves the sensor reading at `register`, scaled to 0-255.
+    The CRGB readings are all retrieved from the sensor in an identical fashion.
+    This is a factory function that implements this retrieval method.
+    """
+    def get_byte(self):
+        value = self.bus.read_word_data(self.ADDR, register) // self._scaling
+        return value
+    return get_byte
+
+
 class TCS34725:
     
     # device-specific constants
@@ -116,34 +139,10 @@ class TCS34725:
     def colour(self):
         return tuple(reading // self._scaling for reading in self.colour_raw)
 
-    @staticmethod
-    def _raw_wrapper(register):
-        """
-        Returns a function that retrieves the sensor reading at `register`.
-        The CRGB readings are all retrieved from the sensor in an identical fashion.
-        This is a factory function that implements this retrieval method.
-        """
-        def get_raw(self):
-            value = self.bus.read_word_data(self.ADDR, register)
-            return value
-        return get_raw
-
     clear_raw = property(_raw_wrapper(CDATA))
     red_raw = property(_raw_wrapper(RDATA))
     green_raw = property(_raw_wrapper(GDATA))
     blue_raw = property(_raw_wrapper(BDATA))
-
-    @staticmethod
-    def _byte_wrapper(register):
-        """
-        Returns a function that retrieves the sensor reading at `register`, scaled to 0-255.
-        The CRGB readings are all retrieved from the sensor in an identical fashion.
-        This is a factory function that implements this retrieval method.
-        """
-        def get_byte(self):
-            value = self.bus.read_word_data(self.ADDR, register) // self._scaling
-            return value
-        return get_byte
 
     clear = property(_byte_wrapper(CDATA))
     red = property(_byte_wrapper(RDATA))
