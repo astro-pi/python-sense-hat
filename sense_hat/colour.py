@@ -34,7 +34,7 @@ def _byte_wrapper(register):
     return get_byte
 
 
-class TCS34725:
+class ColourSensor:
     
     # device-specific constants
     BUS = 1

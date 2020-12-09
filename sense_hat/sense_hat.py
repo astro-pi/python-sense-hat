@@ -15,7 +15,7 @@ from PIL import Image  # pillow
 from copy import deepcopy
 
 from .stick import SenseStick
-from .tcs34725 import TCS34725 as ColourSensor
+from .colour import ColourSensor
 
 class SenseHat(object):
 
