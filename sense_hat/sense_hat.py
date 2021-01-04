@@ -92,7 +92,10 @@ class SenseHat(object):
         self._stick = SenseStick()
 
         # initialise the TCS34725 colour sensor (if possible)
-        self._colour = ColourSensor()
+        try:
+            self._colour = ColourSensor()
+        except:
+            pass
 
     ####
     # Text assets
@@ -205,6 +208,14 @@ class SenseHat(object):
     @property
     def color(self):
         return self._colour
+
+    def has_colour_sensor(self):
+        try:
+            self._colour
+        except:
+            return False
+        else:
+            return True
 
     ####
     # LED Matrix
