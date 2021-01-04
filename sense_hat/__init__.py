@@ -12,5 +12,5 @@ from .stick import (
     ACTION_RELEASED,
     ACTION_HELD,
     )
-from .colour import ColourSensor
+
 __version__ = '2.3.0'

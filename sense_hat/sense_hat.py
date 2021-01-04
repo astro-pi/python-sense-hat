@@ -90,6 +90,8 @@ class SenseHat(object):
         self._gyro_enabled = False
         self._accel_enabled = False
         self._stick = SenseStick()
+
+        # initialise the TCS34725 colour sensor (if possible)
         self._colour = ColourSensor()
 
     ####
@@ -198,6 +200,10 @@ class SenseHat(object):
 
     @property
     def colour(self):
+        return self._colour
+
+    @property
+    def color(self):
         return self._colour
 
     ####
