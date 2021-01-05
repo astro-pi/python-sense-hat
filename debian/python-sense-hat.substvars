@@ -1,0 +1,5 @@
+python:Versions=2.7
+python:Provides=python2.7-sense-hat
+python:Depends=python-numpy, python-pil, python:any, python:any (<< 2.8), python:any (>= 2.7~)
+misc:Depends=
+misc:Pre-Depends=

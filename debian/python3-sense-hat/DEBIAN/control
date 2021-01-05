@@ -1,0 +1,16 @@
+Package: python3-sense-hat
+Source: python-sense-hat
+Version: 2.3.0~test0
+Architecture: all
+Maintainer: Serge Schneider <serge@raspberrypi.com>
+Installed-Size: 67
+Depends: python3-numpy, python3-pil, python3:any, python3-rtimulib
+Section: python
+Priority: optional
+Homepage: https://github.com/RPi-Distro/python-sense-hat
+Description: Sense HAT python library (Python 3)
+ Python module to control the Sense HAT for the Raspberry Pi used
+ in the Astro Pi mission - an education outreach programme for UK schools
+ sending code experiments to the International Space Station
+ .
+ This package installs the library for Python 3.
