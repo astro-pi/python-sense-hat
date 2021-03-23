@@ -42,28 +42,6 @@ class SenseHat(object):
             raise OSError('Cannot access I2C. Please ensure I2C is enabled in raspi-config')
 
         # 0 is With B+ HDMI port facing downwards
-        pix_map0 = np.array([
-             [0,  1,  2,  3,  4,  5,  6,  7],
-             [8,  9, 10, 11, 12, 13, 14, 15],
-            [16, 17, 18, 19, 20, 21, 22, 23],
-            [24, 25, 26, 27, 28, 29, 30, 31],
-            [32, 33, 34, 35, 36, 37, 38, 39],
-            [40, 41, 42, 43, 44, 45, 46, 47],
-            [48, 49, 50, 51, 52, 53, 54, 55],
-            [56, 57, 58, 59, 60, 61, 62, 63]
-        ], int)
-
-        pix_map90 = np.rot90(pix_map0)
-        pix_map180 = np.rot90(pix_map90)
-        pix_map270 = np.rot90(pix_map180)
-
-        self._pix_map = {
-              0: pix_map0,
-             90: pix_map90,
-            180: pix_map180,
-            270: pix_map270
-        }
-
         self._rotation = 0
 
         # Load text assets
@@ -107,36 +85,36 @@ class SenseHat(object):
         show_message function below
         """
 
+        #text_pixels = list(self.load_image(text_image_file, False))
         text_pixels = self.load_image(text_image_file, False)
+        text_pixels = text_pixels.reshape(-1, 5, 8, 3)
         with open(text_file, 'r') as f:
             loaded_text = f.read()
         self._text_dict = {}
-        for index, s in enumerate(loaded_text):
-            start = index * 40
-            end = start + 40
-            char = text_pixels[start:end]
-            self._text_dict[s] = char
+        for i, s in enumerate(loaded_text):
+            #start = i * 40
+            #end = start + 40
+            #char = text_pixels[start:end]
+            self._text_dict[s] = text_pixels[i]
 
     def _trim_whitespace(self, char):  # For loading text assets only
         """
         Internal. Trims white space pixels from the front and back of loaded
         text characters
-        """
+        
 
-        psum = lambda x: sum(sum(x, []))
-        if psum(char) > 0:
-            is_empty = True
-            while is_empty:  # From front
-                row = char[0:8]
-                is_empty = psum(row) == 0
-                if is_empty:
-                    del char[0:8]
-            is_empty = True
-            while is_empty:  # From back
-                row = char[-8:]
-                is_empty = psum(row) == 0
-                if is_empty:
-                    del char[-8:]
+        char is a numpy array shape (5, 8, 3)"""
+        
+        if char.sum() > 0:
+            for i in range(5):
+                if char[i].sum() > 0:
+                    break
+            slice_from = i
+            for i in range(4, -1, -1):
+                if char[i].sum() > 0:
+                    break
+            slice_to = i + 1
+            return char[slice_from:slice_to]
         return char
 
     def _get_settings_file(self, imu_settings_file):
@@ -209,7 +187,7 @@ class SenseHat(object):
         down or sideways. 0 is with the Pi HDMI port facing downwards
         """
 
-        if r in self._pix_map.keys():
+        if r in [0, 90, 180, 270]:
             if redraw:
                 pixel_list = self.get_pixels()
             self._rotation = r
@@ -218,97 +196,101 @@ class SenseHat(object):
         else:
             raise ValueError('Rotation must be 0, 90, 180 or 270 degrees')
 
-    def _pack_bin(self, pix):
+    def _xy_rotated(self, x, y):
+        """ returns the offset value of the x,y location in the flattened
+        form of the array as saved to fb_device stream, adjusting for rotation
         """
-        Internal. Encodes python list [R,G,B] into 16 bit RGB565
-        """
+        if self._rotation == 0:
+            return x + 8 * y
+        elif self._rotation == 90:
+            return 8 + 8 * x - y
+        elif self._rotation == 180:
+            return 72 - x - 8 * y
+        elif self._rotation == 270:
+            return 64 - 8 * x + y
+        else:
+            raise ValueError('Rotation must be 0, 90, 180 or 270 degrees')
 
-        r = (pix[0] >> 3) & 0x1F
-        g = (pix[1] >> 2) & 0x3F
-        b = (pix[2] >> 3) & 0x1F
-        bits16 = (r << 11) + (g << 5) + b
-        return struct.pack('H', bits16)
+    def _pack_bin(self, pixel_list):
+        """
+        Internal. Encodes [R,G,B] into 16 bit RGB565
+        works on a numpy array (H, W, 3) returns flattened bytes string.
+        """
+        bits16 = np.zeros(pixel_list.shape[:2], dtype=np.uint16)
+        bits16 += np.left_shift(np.bitwise_and(pixel_list[:,:,0], 0xF8), 8)
+        bits16 += np.left_shift(np.bitwise_and(pixel_list[:,:,1], 0xFC), 3)
+        bits16 += np.right_shift(pixel_list[:,:,2], 3)
+        return bits16.tostring()
 
     def _unpack_bin(self, packed):
         """
-        Internal. Decodes 16 bit RGB565 into python list [R,G,B]
+        Internal. Decodes 16 bit RGB565 into [R,G,B]
+        takes 1D bytes string and produces a 2D numpy array. The calling
+        process then needs to reshape that to the correct 3D shape.
         """
-
-        output = struct.unpack('H', packed)
-        bits16 = output[0]
-        r = (bits16 & 0xF800) >> 11
-        g = (bits16 & 0x7E0) >> 5
-        b = (bits16 & 0x1F)
-        return [int(r << 3), int(g << 2), int(b << 3)]
+        bits16 = np.fromstring(packed, dtype=np.uint16)
+        pixel_list = np.zeros((len(bits16), 3), dtype=np.uint16)
+        pixel_list[:,0] = np.right_shift(np.bitwise_and(bits16[:], 0xF800), 8)
+        pixel_list[:,1] = np.right_shift(np.bitwise_and(bits16[:], 0x07E0), 3)
+        pixel_list[:,2] = np.left_shift(np.bitwise_and(bits16[:], 0x001F), 3)
+        return pixel_list
 
     def flip_h(self, redraw=True):
         """
         Flip LED matrix horizontal
         """
-
-        pixel_list = self.get_pixels()
-        flipped = []
-        for i in range(8):
-            offset = i * 8
-            flipped.extend(reversed(pixel_list[offset:offset + 8]))
+        pixel_list = self.get_pixels().reshape(8, 8, 3)
+        flipped = np.fliplr(pixel_list)
         if redraw:
             self.set_pixels(flipped)
-        return flipped
+        return flipped.reshape(64, 3) # for compatibility with flat version
 
     def flip_v(self, redraw=True):
         """
         Flip LED matrix vertical
         """
-
-        pixel_list = self.get_pixels()
-        flipped = []
-        for i in reversed(range(8)):
-            offset = i * 8
-            flipped.extend(pixel_list[offset:offset + 8])
+        pixel_list = self.get_pixels().reshape(8, 8, 3)
+        flipped = np.flipud(pixel_list)
         if redraw:
             self.set_pixels(flipped)
-        return flipped
+        return flipped.reshape(64, 3) # for compatibility with flat version
 
     def set_pixels(self, pixel_list):
         """
-        Accepts a list containing 64 smaller lists of [R,G,B] pixels and
-        updates the LED matrix. R,G,B elements must intergers between 0
+        Accepts a list containing 64 smaller lists of [R,G,B] pixels or,
+        ideally, a numpy array shape (64, 3) or (8, 8, 3) and
+        updates the LED matrix. R,G,B elements must be intergers between 0
         and 255
         """
-
-        if len(pixel_list) != 64:
-            raise ValueError('Pixel lists must have 64 elements')
-
-        for index, pix in enumerate(pixel_list):
-            if len(pix) != 3:
-                raise ValueError('Pixel at index %d is invalid. Pixels must contain 3 elements: Red, Green and Blue' % index)
-
-            for element in pix:
-                if element > 255 or element < 0:
-                    raise ValueError('Pixel at index %d is invalid. Pixel elements must be between 0 and 255' % index)
+        if not isinstance(pixel_list, np.ndarray):
+            pixel_list = np.array(pixel_list, dtype=np.uint16)
+        else:
+            if pixel_list.dtype != np.uint16:
+                pixel_list = pixel_list.astype(np.uint16)
+        if pixel_list.shape != (8, 8, 3):
+          try:
+              pixel_list.shape = (8, 8, 3)
+          except:
+              raise ValueError('Pixel lists must have 64 elements of 3 values each Red, Green, Blue')
+        if pixel_list.max() > 255 or pixel_list.min() < 0: # could use where but is it worth it!
+            raise ValueError('A pixel is invalid. Pixel elements must be between 0 and 255')
 
         with open(self._fb_device, 'wb') as f:
-            map = self._pix_map[self._rotation]
-            for index, pix in enumerate(pixel_list):
-                # Two bytes per pixel in fb memory, 16 bit RGB565
-                f.seek(map[index // 8][index % 8] * 2)  # row, column
-                f.write(self._pack_bin(pix))
+            if self._rotation > 0:
+              pixel_list = np.rot90(pixel_list, self._rotation // 90)
+            f.write(self._pack_bin(pixel_list))
 
     def get_pixels(self):
         """
         Returns a list containing 64 smaller lists of [R,G,B] pixels
         representing what is currently displayed on the LED matrix
         """
-
-        pixel_list = []
         with open(self._fb_device, 'rb') as f:
-            map = self._pix_map[self._rotation]
-            for row in range(8):
-                for col in range(8):
-                    # Two bytes per pixel in fb memory, 16 bit RGB565
-                    f.seek(map[row][col] * 2)  # row, column
-                    pixel_list.append(self._unpack_bin(f.read(2)))
-        return pixel_list
+            pixel_list = self._unpack_bin(f.read(128))
+            if self._rotation > 0:
+              pixel_list.shape = (8, 8, 3)
+              pixel_list = np.rot90(pixel_list, (360 - self._rotation) // 90)
+        return pixel_list.reshape(64, 3) # existing apps using get_pixels will expect shape (64, 3)
 
     def set_pixel(self, x, y, *args):
         """
@@ -343,10 +325,9 @@ class SenseHat(object):
                 raise ValueError('Pixel elements must be between 0 and 255')
 
         with open(self._fb_device, 'wb') as f:
-            map = self._pix_map[self._rotation]
             # Two bytes per pixel in fb memory, 16 bit RGB565
-            f.seek(map[y][x] * 2)  # row, column
-            f.write(self._pack_bin(pixel))
+            f.seek(self._xy_rotated(x, y) * 2)
+            f.write(self._pack_bin(np.array([[pixel]]))) # need to wrap to 3D
 
     def get_pixel(self, x, y):
         """
@@ -363,12 +344,11 @@ class SenseHat(object):
         pix = None
 
         with open(self._fb_device, 'rb') as f:
-            map = self._pix_map[self._rotation]
             # Two bytes per pixel in fb memory, 16 bit RGB565
-            f.seek(map[y][x] * 2)  # row, column
+            f.seek(self._xy_rotated(x, y) * 2)
             pix = self._unpack_bin(f.read(2))
 
-        return pix
+        return pix[0]
 
     def load_image(self, file_path, redraw=True):
         """
@@ -380,12 +360,14 @@ class SenseHat(object):
             raise IOError('%s not found' % file_path)
 
         img = Image.open(file_path).convert('RGB')
-        pixel_list = list(map(list, img.getdata()))
+        sz = img.size[0]
+        if sz == img.size[1]: # square image -> scale to 8x8
+            img.thumbnail((8, 8), Image.ANTIALIAS) 
+        pixel_list = np.array(img)        
 
         if redraw:
             self.set_pixels(pixel_list)
-
-        return pixel_list
+        return pixel_list.reshape(-1, 3) # in case existing apps use old shape
 
     def clear(self, *args):
         """
@@ -419,9 +401,9 @@ class SenseHat(object):
         """
 
         if len(s) == 1 and s in self._text_dict.keys():
-            return list(self._text_dict[s])
+            return self._text_dict[s]
         else:
-            return list(self._text_dict['?'])
+            return self._text_dict['?']
 
     def show_message(
             self,
@@ -441,27 +423,22 @@ class SenseHat(object):
         self._rotation -= 90
         if self._rotation < 0:
             self._rotation = 270
-        dummy_colour = [None, None, None]
-        string_padding = [dummy_colour] * 64
-        letter_padding = [dummy_colour] * 8
+        string_padding = np.zeros((8, 8, 3), np.uint16)
+        letter_padding = np.zeros((1, 8, 3), np.uint16)
         # Build pixels from dictionary
-        scroll_pixels = []
-        scroll_pixels.extend(string_padding)
+        scroll_pixels = np.copy(string_padding)
         for s in text_string:
-            scroll_pixels.extend(self._trim_whitespace(self._get_char_pixels(s)))
-            scroll_pixels.extend(letter_padding)
-        scroll_pixels.extend(string_padding)
-        # Recolour pixels as necessary
-        coloured_pixels = [
-            text_colour if pixel == [255, 255, 255] else back_colour
-            for pixel in scroll_pixels
-        ]
-        # Shift right by 8 pixels per frame to scroll
-        scroll_length = len(coloured_pixels) // 8
+            scroll_pixels = np.append(scroll_pixels, self._trim_whitespace(self._get_char_pixels(s)), axis=0)
+            scroll_pixels = np.append(scroll_pixels, letter_padding, axis=0)
+        scroll_pixels = np.append(scroll_pixels, string_padding, axis=0)
+        # Recolour pixels as necessary - first get indices of drawn pixels
+        f_px = np.where(scroll_pixels[:,:] == np.array([255, 255, 255]))
+        scroll_pixels[:,:] = back_colour
+        scroll_pixels[f_px[0], f_px[1]] = np.array(text_colour)
+        # Then scroll and repeatedly set the pixels
+        scroll_length = len(scroll_pixels)
         for i in range(scroll_length - 8):
-            start = i * 8
-            end = start + 64
-            self.set_pixels(coloured_pixels[start:end])
+            self.set_pixels(scroll_pixels[i:i+8])
             time.sleep(scroll_speed)
         self._rotation = previous_rotation
 
@@ -484,15 +461,14 @@ class SenseHat(object):
         self._rotation -= 90
         if self._rotation < 0:
             self._rotation = 270
-        dummy_colour = [None, None, None]
-        pixel_list = [dummy_colour] * 8
-        pixel_list.extend(self._get_char_pixels(s))
-        pixel_list.extend([dummy_colour] * 16)
-        coloured_pixels = [
-            text_colour if pixel == [255, 255, 255] else back_colour
-            for pixel in pixel_list
-        ]
-        self.set_pixels(coloured_pixels)
+        pixel_list = np.zeros((8,8,3), np.uint16)
+        pixel_list[1:6] = self._get_char_pixels(s)
+        # Recolour pixels as necessary - first get indices of drawn pixels
+        f_px = np.where(pixel_list[:,:] == np.array([255, 255, 255]))
+        pixel_list[:,:] = back_colour
+        pixel_list[f_px[0], f_px[1]] = text_colour
+        # Finally set pixels
+        self.set_pixels(pixel_list)
         self._rotation = previous_rotation
 
     @property
