@@ -2,6 +2,10 @@
 
 ## v2
 
+### 2.2.0
+
+- Added new stick interface for the joystick
+
 ### 2.1.0
 
 - Added gamma, low light and other properties
