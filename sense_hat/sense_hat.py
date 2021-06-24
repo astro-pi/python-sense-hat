@@ -203,11 +203,12 @@ class SenseHat(object):
 
     @property
     def colour(self):
-        return self._colour
+        try:
+            return self._colour
+        except AttributeError as e:
+            raise RuntimeError('This Sense HAT does not have a color sensor') from e
 
-    @property
-    def color(self):
-        return self._colour
+    color = colour
 
     def has_colour_sensor(self):
         try:
