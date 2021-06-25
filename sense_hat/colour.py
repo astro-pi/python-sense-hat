@@ -5,6 +5,12 @@ Documentation (including datasheet): https://ams.com/tcs34725#tab/documents
 
 import smbus
 import glob
+
+import io, os, sys, errno
+import mmap
+from struct import Struct
+from collections import namedtuple
+
 from time import sleep
 
 _error_str = "Failed to initialise TCS34725 colour sensor."
@@ -162,6 +168,105 @@ class I2C(HardwareInterface):
     get_clear = _raw_wrapper(CDATA)
 
 
+class StatusFile(HardwareInterface):
+
+    COLOUR_DATA = Struct(str(
+        '@'   # native mode
+        '?'   # enabled
+        '4I'  # RGBC
+        'H'   # gain
+        'H'   # integration cycles
+        ))
+
+    ColourData = namedtuple(
+        'ColourData', (
+            'enabled', 'R', 'G', 'B', 'C', 'gain', 'integration_cycles'))
+
+    def __init__(self):
+        self.init_file()
+
+    @staticmethod
+    def filename():
+        """
+        Return the filename used to represent the state of the emulated sense HAT's
+        co sensor. On UNIX we try ``/dev/shm`` then fall back to ``/tmp``; on
+        Windows we use whatever ``%TEMP%`` contains
+        """
+        fname = 'rpi-sense-emu-colour'
+        if sys.platform.startswith('win'):
+            # just use a temporary file on Windows
+            return os.path.join(os.environ['TEMP'], fname)
+        else:
+            if os.path.exists('/dev/shm'):
+                return os.path.join('/dev/shm', fname)
+            else:
+                return os.path.join('/tmp', fname)
+
+    def init_file(self):
+        """
+        Opens the file representing the state of the humidity sensor. The
+        file-like object is returned.
+        If the file already exists we simply make sure it is the right size. If
+        the file does not already exist, it is created and zeroed.
+        """
+        try:
+            # Attempt to open the colour sensor's file and ensure it's the right size
+            fd = io.open(self.filename(), 'r+b', buffering=0)
+            fd.seek(self.COLOUR_DATA.size)
+            fd.truncate()
+        except IOError as e:
+            # If the colour sensor device file doesn't exist, zero it into existence
+            if e.errno == errno.ENOENT:
+                fd = io.open(self.filename(), 'w+b', buffering=0)
+                fd.write(b'\x00' * self.COLOUR_DATA.size)
+            else:
+                raise IOError from e
+        else:
+            self._fd = fd
+            self._map = mmap.mmap(self._fd.fileno(), 0, access=mmap.ACCESS_WRITE)
+
+    def read(self):
+        return self.ColourData(*self.COLOUR_DATA.unpack_from(self._map))
+
+    def write(self, value):
+        self.COLOUR_DATA.pack_into(self._map, 0, *value)
+
+    def get_enabled(self):
+        return self.read().enabled
+
+    def set_enabled(self, value):
+        self.write(self.read()._replace(enabled=value))
+
+    def get_gain(self):
+        return self.read().gain
+
+    def set_gain(self, value):
+        self.write(self.read()._replace(gain=value))
+
+    def get_integration_cycles(self):
+        return self.read().integration_cycles
+
+    def set_integration_cycles(self, value):
+        self.write(self.read()._replace(integration_cycles=value))
+
+    def get_all(self):
+        _, R, G, B, C, _, _ = self.read()
+        return (R, G, B, C)
+
+    def get_red(self):
+        print(f"DEBUG: {self.read()}")
+        return self.read().R
+
+    def get_green(self):
+        return self.read().G
+
+    def get_blue(self):
+        return self.read().B
+
+    def get_clear(self):
+        return self.read().C
+
+
 class ColourSensor:
     
     def __init__(self, gain=1, integration_cycles=1, interface=I2C):
@@ -222,6 +327,9 @@ class ColourSensor:
 
     color_raw = colour_raw
     color = colour
+
+    # For the following, could also use something like:
+    # red_raw = property(lambda self: self.interface.get_red())
 
     @property
     def red_raw(self):
