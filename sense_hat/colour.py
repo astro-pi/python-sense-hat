@@ -314,7 +314,7 @@ class ColourSensor:
         if gain in self.interface.GAIN_VALUES:
             self.interface.set_gain(gain)
         else:
-            raise RuntimeError(f'Cannot set gain to {gain}. Values: {self.interface.GAIN_VALUES}')
+            raise ValueError(f'Cannot set gain to {gain}. Values: {self.interface.GAIN_VALUES}')
 
     @property
     def integration_cycles(self):
@@ -329,7 +329,7 @@ class ColourSensor:
             self._scaling = self._max_value // 256
             sleep(self.interface.CLOCK_STEP)
         else:
-            raise RuntimeError(f'Cannot set integration cycles to {integration_cycles} (1-256)')
+            raise ValueError(f'Cannot set integration cycles to {integration_cycles} (1-256)')
 
     @property
     def integration_time(self):
