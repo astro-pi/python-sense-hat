@@ -2,6 +2,10 @@
 
 ## v2
 
+### 2.3.x
+
+- Added support for the light/colour sensor in the v2 Sense HAT
+
 ### 2.2.0
 
 - Added new stick interface for the joystick
