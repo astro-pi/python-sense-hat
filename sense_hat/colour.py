@@ -324,63 +324,38 @@ class ColourSensor:
     def integration_cycles(self, integration_cycles):
         if 1 <= integration_cycles <= 256:
             self.interface.set_integration_cycles(integration_cycles)
-            self._integration_time = integration_cycles * self.interface.CLOCK_STEP
-            self._max_value = self.interface.max_value(integration_cycles)
-            self._scaling = self._max_value // 256
             sleep(self.interface.CLOCK_STEP)
         else:
             raise ValueError(f'Cannot set integration cycles to {integration_cycles} (1-256)')
 
     @property
     def integration_time(self):
-        return self._integration_time
+        return self.integration_cycles * self.interface.CLOCK_STEP
 
     @property
     def max_raw(self):
-        return self._max_value
+        return self.interface.max_value(self.integration_cycles)
 
     @property
     def colour_raw(self):
         return self.interface.get_raw()
 
+    color_raw = colour_raw
+    red_raw = property(lambda self: self.interface.get_red())
+    green_raw = property(lambda self: self.interface.get_green())
+    blue_raw = property(lambda self: self.interface.get_blue())
+    clear_raw = property(lambda self: self.interface.get_clear())
+
+    @property
+    def _scaling(self):
+        return self.max_raw // 256
+    
     @property
     def colour(self):
         return tuple(reading // self._scaling for reading in self.colour_raw)
 
-    color_raw = colour_raw
     color = colour
-
-    # For the following, could also use something like:
-    # red_raw = property(lambda self: self.interface.get_red())
-
-    @property
-    def red_raw(self):
-        return self.interface.get_red()
-    
-    @property
-    def green_raw(self):
-        return self.interface.get_green()
-
-    @property
-    def blue_raw(self):
-        return self.interface.get_blue()
-
-    @property
-    def clear_raw(self):
-        return self.interface.get_clear()
-
-    @property
-    def red(self):
-        return self.red_raw // self._scaling
-    
-    @property
-    def green(self):
-        return self.green_raw // self._scaling
-
-    @property
-    def blue(self):
-        return self.blue_raw // self._scaling
-
-    @property
-    def clear(self):
-        return self.clear_raw // self._scaling
+    red = property(lambda self: self.red_raw // self._scaling )
+    green = property(lambda self: self.green_raw // self._scaling )
+    blue = property(lambda self: self.blue_raw // self._scaling )
+    clear = property(lambda self: self.clear_raw // self._scaling )
