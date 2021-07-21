@@ -1,3 +1,9 @@
+python-sense-hat (2.3.1~test0) UNRELEASED; urgency=medium
+
+  * v2.3.1 alpha
+
+ -- George Boukeas <george.boukeas@raspberrypi.org>  Wed, 21 Jul 2021 15:11:00 +0000
+
 python-sense-hat (2.3.0~test0) UNRELEASED; urgency=medium
 
   * v2.3.0 alpha
