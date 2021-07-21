@@ -1,3 +1,0 @@
-python3:Depends=python3-numpy, python3-pil, python3:any
-misc:Depends=
-misc:Pre-Depends=
