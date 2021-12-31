@@ -272,7 +272,7 @@ class SenseHat(object):
     def set_pixels(self, pixel_list):
         """
         Accepts a list containing 64 smaller lists of [R,G,B] pixels and
-        updates the LED matrix. R,G,B elements must intergers between 0
+        updates the LED matrix. R,G,B elements must integers between 0
         and 255
         """
 
