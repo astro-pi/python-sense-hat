@@ -4,8 +4,8 @@ Documentation (including datasheet): https://ams.com/tcs34725#tab/documents
 """
 
 from time import sleep
-
-_error_str = "Failed to initialise TCS34725 colour sensor."
+from .exceptions import ColourSensorInitialisationError, InvalidGainError, \
+    InvalidIntegrationCyclesError
 
 
 class HardwareInterface:
@@ -84,7 +84,7 @@ class HardwareInterface:
 
     def get_red(self):
         """
-        Return a the raw value of the R (red) channel.
+        Return the raw value of the R (red) channel.
         The maximum for this raw value depends on the number of
         integration cycles and can be computed using `max_value`.
         """
@@ -92,7 +92,7 @@ class HardwareInterface:
 
     def get_green(self):
         """
-        Return a the raw value of the G (green) channel.
+        Return the raw value of the G (green) channel.
         The maximum for this raw value depends on the number of
         integration cycles and can be computed using `max_value`.
         """
@@ -100,7 +100,7 @@ class HardwareInterface:
 
     def get_blue(self):
         """
-        Return a the raw value of the B (blue) channel.
+        Return the raw value of the B (blue) channel.
         The maximum for this raw value depends on the number of
         integration cycles and can be computed using `max_value`.
         """
@@ -108,7 +108,7 @@ class HardwareInterface:
 
     def get_clear(self):
         """
-        Return a the raw value of the C (clear light) channel.
+        Return the raw value of the C (clear light) channel.
         The maximum for this raw value depends on the number of
         integration cycles and can be computed using `max_value`.
         """
@@ -176,19 +176,16 @@ class I2C(HardwareInterface):
         try:
             self.bus = smbus.SMBus(self.BUS)
         except Exception as e:
-            explanation = " (I2C is not enabled)" if not self.i2c_enabled() else ""
-            raise RuntimeError(f'{_error_str}{explanation}') from e
-        
+            explanation = "(I2C is not enabled)" if not self.i2c_enabled() else ""
+            raise ColourSensorInitialisationError(explanation=explanation) from e
         try:
             id = self._read(self.ID)
         except Exception as e:
-            explanation = " (sensor not present)"
-            raise RuntimeError(f'{_error_str}{explanation}') from e
-
+            explanation = "(sensor not present)"
+            raise ColourSensorInitialisationError(explanation=explanation) from e
         if id != 0x44:
             explanation = f" (different device id detected: {id})"
-            raise RuntimeError(f'{_error_str}{explanation}')
-
+            raise ColourSensorInitialisationError(explanation=explanation) from e
     @staticmethod
     def i2c_enabled():
         """Returns True if I2C is enabled or False otherwise."""
@@ -314,7 +311,7 @@ class ColourSensor:
         if gain in self.interface.GAIN_VALUES:
             self.interface.set_gain(gain)
         else:
-            raise ValueError(f'Cannot set gain to {gain}. Values: {self.interface.GAIN_VALUES}')
+            raise InvalidGainError(gain=gain, values=self.interface.GAIN_VALUES)
 
     @property
     def integration_cycles(self):
@@ -326,7 +323,7 @@ class ColourSensor:
             self.interface.set_integration_cycles(integration_cycles)
             sleep(self.interface.CLOCK_STEP)
         else:
-            raise ValueError(f'Cannot set integration cycles to {integration_cycles} (1-256)')
+            raise InvalidIntegrationCyclesError(integration_cycles=integration_cycles)
 
     @property
     def integration_time(self):

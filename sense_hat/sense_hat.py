@@ -1,4 +1,5 @@
 #!/usr/bin/python
+import logging
 import struct
 import os
 import sys
@@ -16,6 +17,7 @@ from copy import deepcopy
 
 from .stick import SenseStick
 from .colour import ColourSensor
+from .exceptions import ColourSensorInitialisationError
 
 class SenseHat(object):
 
@@ -94,7 +96,8 @@ class SenseHat(object):
         # initialise the TCS34725 colour sensor (if possible)
         try:
             self._colour = ColourSensor()
-        except:
+        except Exception as e:
+            logging.warning(e)
             pass
 
     ####
@@ -206,7 +209,9 @@ class SenseHat(object):
         try:
             return self._colour
         except AttributeError as e:
-            raise RuntimeError('This Sense HAT does not have a color sensor') from e
+            raise ColourSensorInitialisationError(
+                explanation="This Sense HAT" +
+                            " does not have a color sensor") from e
 
     color = colour
 
@@ -531,7 +536,7 @@ class SenseHat(object):
 
     @gamma.setter
     def gamma(self, buffer):
-        if len(buffer) is not 32:
+        if len(buffer) != 32:
             raise ValueError('Gamma array must be of length 32')
 
         if not all(b <= 31 for b in buffer):

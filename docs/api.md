@@ -819,7 +819,7 @@ Note that, in the current implementation, the four values accessed through the `
 
 In sensors, the term "gain" can be understood as being synonymous to _sensitivity_. A higher gain setting means the output values will be greater for the same input. 
 
-There are four possible gain values for the colour sensor: `1`, `4`, `16` and `60`, with the default value being `1`. You can get or set the sensor gain through the `gain` property of the `ColourSensor` object. An attempt to set the gain to a value that is not valid will result in a `ValueError` exception being raised.
+There are four possible gain values for the colour sensor: `1`, `4`, `16` and `60`, with the default value being `1`. You can get or set the sensor gain through the `gain` property of the `ColourSensor` object. An attempt to set the gain to a value that is not valid will result in an `InvalidGainError` exception being raised.
 
 ```python
 from sense_hat import SenseHAT
@@ -846,7 +846,7 @@ When there is very little ambient light and the RGBC values are low, it makes se
 
 You can specify the number of _integration cycles_ required to generate a new set of sensor readings. Each integration cycle is 2.4 milliseconds long, so the number of integration cycles determines the _minimum_ amount of time required between consecutive readings.
 
-You can set the number of integration cycles to any integer between `1` and `256`, through the `integration_cycles` property of the `ColourSensor` object. The default value is `1`. An attempt to set the number of integration cycles to a value that is not valid will result in a `ValueError` or `TypeError` exception being raised.
+You can set the number of integration cycles to any integer between `1` and `256`, through the `integration_cycles` property of the `ColourSensor` object. The default value is `1`. An attempt to set the number of integration cycles to a value that is not valid will result in a `InvalidIntegrationCyclesError` or `TypeError` exception being raised.
 
 ```python
 from sense_hat import SenseHAT
@@ -896,3 +896,9 @@ sleep(sense.colour.integration_time + 0.1)  # try omitting this
 print(f"Current raw sensor readings: {sense.colour.colour_raw}")
 print(f"Scaled values: {sense.colour.colour}")
 ```
+
+## Exceptions
+
+Custom Sense HAT exceptions are statically defined in the `sense_hat.exceptions` module. 
+The exceptions relate to problems encountered while initialising the colour chip or due to setting invalid parameters. 
+Each exception includes a message describing the issue encountered, and is subclassed from the base class `SenseHatException`. 
