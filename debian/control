@@ -1,0 +1,32 @@
+Source: python-sense-hat
+Section: python
+Priority: optional
+Maintainer: Serge Schneider <serge@raspberrypi.com>
+Build-Depends: debhelper (>= 9~), dh-python, python-all (>= 2.6.6-3~),
+ python-setuptools, python3-all, python3-setuptools
+Standards-Version: 4.3.0
+Homepage: https://github.com/RPi-Distro/python-sense-hat
+Vcs-Git: git://github.com/RPi-Distro/python-sense-hat.git -b debian
+Vcs-Browser: https://github.com/RPi-Distro/python-sense-hat/tree/debian
+
+Package: python-sense-hat
+Architecture: all
+Depends: ${misc:Depends}, ${python:Depends}, python-rtimulib, python-pil,
+ python-numpy
+Description: Sense HAT python library (Python 2)
+ Python module to control the Sense HAT for the Raspberry Pi used
+ in the Astro Pi mission - an education outreach programme for UK schools
+ sending code experiments to the International Space Station
+ .
+ This package installs the library for Python 2.
+
+Package: python3-sense-hat
+Architecture: all
+Depends: ${misc:Depends}, ${python3:Depends}, python3-rtimulib, python3-pil,
+ python3-numpy, python3-smbus
+Description: Sense HAT python library (Python 3)
+ Python module to control the Sense HAT for the Raspberry Pi used
+ in the Astro Pi mission - an education outreach programme for UK schools
+ sending code experiments to the International Space Station
+ .
+ This package installs the library for Python 3.
