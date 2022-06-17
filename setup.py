@@ -12,6 +12,7 @@ setup(
     author_email="dave@raspberrypi.org",
     description="Python module to control the Raspberry Pi Sense HAT, originally used in the Astro Pi mission",
     long_description=read('README.md'),
+    long_description_content_type="text/markdown",
     license="BSD",
     keywords=[
         "sense hat",
