@@ -12,6 +12,7 @@ The Sense HAT features an 8x8 RGB LED matrix, a mini joystick and the following 
 - Temperature
 - Humidity
 - Barometric pressure
+- Light and colour
 
 ## Install
 
@@ -35,10 +36,10 @@ sense = SenseHat()
 sense.show_message("Hello world!")
 ```
 
-See the [API reference](api.md) for full documentation of the library's functions. See [examples](https://github.com/RPi-Distro/python-sense-hat/blob/master/examples/README.md).
+See the [API reference](api.md) for full documentation of the library's functions. See [examples](examples/README.md).
 
 ## Development
 
-This library is maintained by the Raspberry Pi Foundation on GitHub at [github.com/RPi-Distro/python-sense-hat](https://github.com/RPi-Distro/python-sense-hat)
+This library is maintained by the Raspberry Pi Foundation on GitHub at [github.com/astro-pi/python-sense-hat](https://github.com/astro-pi/python-sense-hat)
 
 See the [changelog](changelog.md).

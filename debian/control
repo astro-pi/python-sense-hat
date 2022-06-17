@@ -11,7 +11,7 @@ Vcs-Browser: https://github.com/RPi-Distro/python-sense-hat/tree/debian
 Package: python3-sense-hat
 Architecture: all
 Depends: ${misc:Depends}, ${python3:Depends}, python3-rtimulib, python3-pil,
- python3-numpy
+ python3-numpy, python3-smbus
 Description: Sense HAT python library (Python 3)
  Python module to control the Sense HAT for the Raspberry Pi used
  in the Astro Pi mission - an education outreach programme for UK schools

@@ -60,6 +60,7 @@ Contributors
 * `Serge Schneider`_
 * `Dave Jones`_
 * `Tyler Laws`_
+* `George Boukeas`_
 
 Open Source
 ===========

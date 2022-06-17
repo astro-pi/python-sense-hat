@@ -7,18 +7,18 @@ def read(fname):
 
 setup(
     name="sense-hat",
-    version="2.2.0",
+    version="2.3.1",
     author="Dave Honess",
     author_email="dave@raspberrypi.org",
-    description="Python module to control the Raspberry Pi Sense HAT used in the Astro Pi mission",
-    long_description=read('README.rst'),
+    description="Python module to control the Raspberry Pi Sense HAT, originally used in the Astro Pi mission",
+    long_description=read('README.md'),
     license="BSD",
     keywords=[
         "sense hat",
         "raspberrypi",
         "astro pi",
     ],
-    url="https://github.com/RPi-Distro/python-sense-hat",
+    url="https://github.com/astro-pi/python-sense-hat",
     packages=find_packages(),
     package_data={
         "txt": ['sense_hat_text.txt'],
