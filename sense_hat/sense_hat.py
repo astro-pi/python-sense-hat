@@ -2,6 +2,7 @@
 import logging
 import struct
 import os
+import hashlib
 import sys
 import math
 import time
@@ -12,12 +13,18 @@ import RTIMU  # custom version
 import pwd
 import array
 import fcntl
+from pathlib import Path
 from PIL import Image  # pillow
 from copy import deepcopy
 
 from .stick import SenseStick
 from .colour import ColourSensor
 from .exceptions import ColourSensorInitialisationError
+
+
+def _hash_matrix(img):
+    img_str = "".join(f"{c:03}" for rgb in img for c in rgb)
+    return hashlib.sha1(bytes(img_str, encoding='utf-8')).hexdigest()[:16]
 
 class SenseHat(object):
 
@@ -301,7 +308,7 @@ class SenseHat(object):
             self.set_pixels(flipped)
         return flipped
 
-    def set_pixels(self, pixel_list):
+    def set_pixels(self, pixel_list, intercept=True):
         """
         Accepts a list containing 64 smaller lists of [R,G,B] pixels and
         updates the LED matrix. R,G,B elements must integers between 0
@@ -325,6 +332,25 @@ class SenseHat(object):
                 # Two bytes per pixel in fb memory, 16 bit RGB565
                 f.seek(map[index // 8][index % 8] * 2)  # row, column
                 f.write(self._pack_bin(pix))
+        if intercept:
+            self._save_matrix()
+
+    def _save_matrix(self):
+        matrix = tuple(tuple(rgb) for rgb in self.get_pixels())
+        img = Image.new("RGB", (8, 8))
+        img.putdata(matrix)
+        img = img.resize((256, 256), resample=0)
+        hash = _hash_matrix(matrix)
+        save_path = Path(f"{os.environ.get('HOME')}/sensehat/")
+        img.save(save_path / f"{hash}.png")
+        try:
+            with open('/tmp/mz.txt') as f:
+                current = f.read().strip()
+        except:
+            pass
+        else:
+            with (save_path / "set_pixels.log").open(mode="a") as f:
+                f.write(f"{current} generates {hash}\n")
 
     def get_pixels(self):
         """
