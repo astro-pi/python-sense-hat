@@ -1,35 +1,3 @@
-Skip to content
-Search or jump to…
-Pull requests
-Issues
-Marketplace
-Explore
- 
-@snake48 
-astro-pi
-/
-python-sense-hat
-Public
-Code
-Issues
-25
-Pull requests
-9
-Actions
-Projects
-Wiki
-Security
-Insights
-python-sense-hat/sense_hat/colour.py /
-@G3zz
-G3zz Small improvements to lib
-…
-Latest commit 9a67533 on 1 Jun
- History
- 2 contributors
-@boukeas@G3zz
-358 lines (301 sloc)  11.6 KB
-
 """
 Python library for the TCS34725 Color Sensor
 Documentation (including datasheet): https://ams.com/tcs34725#tab/documents
@@ -390,17 +358,3 @@ class ColourSensor:
     green = property(lambda self: self.green_raw // self._scaling )
     blue = property(lambda self: self.blue_raw // self._scaling )
     clear = property(lambda self: self.clear_raw // self._scaling )
-Footer
-© 2022 GitHub, Inc.
-Footer navigation
-Terms
-Privacy
-Security
-Status
-Docs
-Contact GitHub
-Pricing
-API
-Training
-Blog
-About
