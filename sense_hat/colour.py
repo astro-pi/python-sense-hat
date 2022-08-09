@@ -340,6 +340,7 @@ class ColourSensor:
     green_raw = property(lambda self: self.interface.get_green())
     blue_raw = property(lambda self: self.interface.get_blue())
     clear_raw = property(lambda self: self.interface.get_clear())
+    brightness = clear_raw
 
     @property
     def _scaling(self):
