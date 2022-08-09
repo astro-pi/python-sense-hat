@@ -15,7 +15,6 @@ class HardwareInterface:
     actual hardware. Using this intermediate layer of abstraction, a
     `ColourSensor` object interacts with the hardware without being
     aware of how this interaction is implemented.
-
     Different subclasses of the `HardwareInterface` class can provide
     access to the hardware through e.g. I2C, `libiio` and its system
     files or even a hardware emulator.
@@ -131,7 +130,6 @@ class I2C(HardwareInterface):
     """
     An implementation of the `HardwareInterface` for the TCS34725 sensor
     that uses I2C to control the sensor and retrieve measurements.
-
     Use the datasheet as a reference: https://ams.com/tcs34725#tab/documents
     """
 
@@ -350,6 +348,10 @@ class ColourSensor:
     @property
     def colour(self):
         return tuple(reading // self._scaling for reading in self.colour_raw)
+
+    @property
+    def rgb(self):
+        return tuple(reading // self._scaling for reading in self.colour_raw)[0:3]
 
     color = colour
     red = property(lambda self: self.red_raw // self._scaling )
