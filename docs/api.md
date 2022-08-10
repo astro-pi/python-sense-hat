@@ -881,6 +881,8 @@ The following properties of the `ColourSensor` object provide direct access to t
 `blue_raw` | int | The amount of incident blue light, between 0 and `max_raw`
 `clear_raw` | int | The amount of incident light (brightness), between 0 and `max_raw`
 `colour_raw` | tuple | A 4-tuple containing the RGBC (Red, Green, Blue and Clear) raw sensor readings, each between 0 and `max_raw`
+`rgb` | tuple | A 3-tuple containing the RGB raw sensor readings, each between 0 and `max_raw`.
+`brightness` | int | An alias to the `clear_raw` property - the amount of incident light, between 0 and `max_raw`
 
 Here is an example comparing raw values to the corresponding scaled ones, for a given number of integration cycles.
 
