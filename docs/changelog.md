@@ -2,6 +2,18 @@
 
 ## v2
 
+### 2.4.0
+- Added `rgb` method to allow for easy reuse of sense hat colour sensor values
+- Added `brightness` method alias for the sense hat colour sensor
+
+### 2.3.x
+
+- Added support for the light/colour sensor in the v2 Sense HAT
+
+### 2.2.0
+
+- Added new stick interface for the joystick
+
 ### 2.1.0
 
 - Added gamma, low light and other properties

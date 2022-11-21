@@ -10,4 +10,4 @@ include /usr/share/dpkg/default.mk
 export PYBUILD_NAME = sense-hat
 
 %:
-	dh $@ --with python2,python3 --buildsystem=pybuild
+	dh $@ --with python3 --buildsystem=pybuild

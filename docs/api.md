@@ -319,7 +319,7 @@ sense.clear(255, 127, 0)
 print(sense.gamma)
 time.sleep(2)
 
-sense.gamma = reversed(sense.gamma)
+sense.gamma = list(reversed(sense.gamma))
 print(sense.gamma)
 time.sleep(2)
 
@@ -661,7 +661,7 @@ A tuple describing a joystick event. Contains three named parameters:
 
 * `timestamp` - The time at which the event occurred, as a fractional number of seconds (the same format as the built-in `time` function)
 
-* `direction` - The direction the joystick was moved, as a string (`"up"`, `"down"`, `"left"`, `"right"`, `"push"`)
+* `direction` - The direction the joystick was moved, as a string (`"up"`, `"down"`, `"left"`, `"right"`, `"middle"`)
 
 * `action` - The action that occurred, as a string (`"pressed"`, `"released"`, `"held"`)
 
@@ -774,3 +774,133 @@ Note that the `direction_any` event is always called *after* all other events
 making it an ideal hook for things like display refreshing (as in the example
 above).
 
+- - -
+## Light and colour sensor
+
+The v2 Sense HAT includes a TCS34725 colour sensor that is capable of measuring the amount of Red, Green and Blue (RGB) in the incident light, as well as providing a Clear light (brightness) reading.
+
+You can interact with the colour sensor through the `colour` (or `color`) attribute of the Sense HAT, which corresponds to a `ColourSensor` object.
+
+The example below serves as an overview of how the colour sensor can be used, while the sections that follow provide additional details and explanations.
+
+```python
+from sense_hat import SenseHat
+from time import sleep
+
+sense = SenseHat()
+sense.color.gain = 4
+sense.color.integration_cycles = 64
+
+while True:
+    sleep(2 * sense.colour.integration_time)
+    red, green, blue, clear = sense.colour.colour # readings scaled to 0-256
+    print(f"R: {red}, G: {green}, B: {blue}, C: {clear}")
+```
+
+---
+### Obtaining RGB and Clear light readings
+
+The `colour` (or `color`) property of the `ColourSensor` object is a 4-tuple containing the measured values for Red, Green and Blue (RGB), along with a Clear light value, which is a measure of brightness. Individual colour and light readings can also be obtained through the `red`, `green`, `blue` and `clear` properties of the `ColourSensor` object.
+
+`ColourSensor` property | Returned type | Explanation
+--- | --- | ---
+`red` | int | The amount of incident red light, scaled to 0-256
+`green` | int | The amount of incident green light, scaled to 0-256
+`blue` | int | The amount of incident blue light, scaled to 0-256
+`clear` | int | The amount of incident light (brightness), scaled to 0-256
+`colour` | tuple | A 4-tuple containing the RGBC (Red, Green, Blue and Clear) sensor readings, each scaled to 0-256
+
+These are all read-only properties; they cannot be set.
+
+Note that, in the current implementation, the four values accessed through the `colour` property are retrieved through a single sensor reading. Obtaining these values through the `red`, `green`, `blue` and `clear` properties would require four separate readings.
+
+---
+### Gain
+
+In sensors, the term "gain" can be understood as being synonymous to _sensitivity_. A higher gain setting means the output values will be greater for the same input. 
+
+There are four possible gain values for the colour sensor: `1`, `4`, `16` and `60`, with the default value being `1`. You can get or set the sensor gain through the `gain` property of the `ColourSensor` object. An attempt to set the gain to a value that is not valid will result in an `InvalidGainError` exception being raised.
+
+```python
+from sense_hat import SenseHAT
+from time import sleep
+
+sense = SenseHat()
+sense.colour.gain = 1
+sleep(1)
+print(f"Gain: {sense.colour.gain}")
+print(f"RGBC: {sense.colour.colour}")
+
+sense.colour.gain = 16
+sleep(1)
+print(f"Gain: {sense.colour.gain}")
+print(f"RGBC: {sense.colour.colour}")
+```
+
+Under the same lighting conditions, the RGBC values should be considerably higher when the gain setting is increased.
+
+When there is very little ambient light and the RGBC values are low, it makes sense to use a higher gain setting. Conversely, when there is too much light and the RGBC values are maximal, the sensor is saturated and the gain should be set to lower values. 
+
+---
+### Integration cycles and the interval between measurements
+
+You can specify the number of _integration cycles_ required to generate a new set of sensor readings. Each integration cycle is 2.4 milliseconds long, so the number of integration cycles determines the _minimum_ amount of time required between consecutive readings.
+
+You can set the number of integration cycles to any integer between `1` and `256`, through the `integration_cycles` property of the `ColourSensor` object. The default value is `1`. An attempt to set the number of integration cycles to a value that is not valid will result in a `InvalidIntegrationCyclesError` or `TypeError` exception being raised.
+
+```python
+from sense_hat import SenseHAT
+from time import sleep
+
+sense = SenseHat()
+sense.colour.integration_cycles = 100
+print(f"Integration cycles: {sense.colour.integration_cycles}")
+print(f"Minimum wait time between measurements: {sense.colour.integration_time} seconds")
+```
+
+---
+### Integration cycles and raw values
+
+The values of the `colour`, `red`, `green`, `blue` and `clear` properties are integers between 0 and 256. However, these are not the actual _raw_ values obtained from the sensor; they have been scaled down to this range for convenience. 
+
+The range of the raw values depends on the number of integration cycles:
+
+`integration_cycles` | maximum raw value (`max_raw`)
+--- | ---
+1 - 64 | 1024 * `integration_cycles`
+\> 64 | 65536
+
+What this really means is that the _accuracy_ of the sensor is affected by the number of integration cycles, i.e. the time required by the sensor to obtain a reading. A longer integration time will result in more reliable readings that fall into a wider range of values, being able to more accurately distinguish between similar lighting conditions.
+
+The following properties of the `ColourSensor` object provide direct access to the raw values measured by the sensor.
+
+`ColourSensor` property | Returned type | Explanation
+--- | --- | ---
+`red_raw` | int | The amount of incident red light, between 0 and `max_raw`
+`green_raw` | int | The amount of incident green light, between 0 and `max_raw`
+`blue_raw` | int | The amount of incident blue light, between 0 and `max_raw`
+`clear_raw` | int | The amount of incident light (brightness), between 0 and `max_raw`
+`colour_raw` | tuple | A 4-tuple containing the RGBC (Red, Green, Blue and Clear) raw sensor readings, each between 0 and `max_raw`
+`rgb` | tuple | A 3-tuple containing the RGB raw sensor readings, each between 0 and `max_raw`.
+`brightness` | int | An alias to the `clear_raw` property - the amount of incident light, between 0 and `max_raw`
+
+Here is an example comparing raw values to the corresponding scaled ones, for a given number of integration cycles.
+
+```
+from sense_hat import SenseHAT
+from time import sleep
+
+sense = SenseHat()
+sense.colour.integration_cycles = 64
+print(f"Minimum time between readings: {sense.colour.integration_time} seconds")
+print(f"Maximum raw sensor reading: {sense.colour.max_raw}")
+sleep(sense.colour.integration_time + 0.1)  # try omitting this
+print(f"Current raw sensor readings: {sense.colour.colour_raw}")
+print(f"Scaled values: {sense.colour.colour}")
+```
+
+## Exceptions
+
+Custom Sense HAT exceptions are statically defined in the `sense_hat.exceptions` module. 
+The exceptions relate to problems encountered while initialising the colour chip or due to setting invalid parameters. 
+Each exception includes a message describing the issue encountered, and is subclassed from the base class `SenseHatException`. 

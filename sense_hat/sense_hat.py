@@ -1,4 +1,5 @@
 #!/usr/bin/python
+import logging
 import struct
 import os
 import sys
@@ -15,7 +16,8 @@ from PIL import Image  # pillow
 from copy import deepcopy
 
 from .stick import SenseStick
-
+from .colour import ColourSensor
+from .exceptions import ColourSensorInitialisationError
 
 class SenseHat(object):
 
@@ -90,6 +92,13 @@ class SenseHat(object):
         self._gyro_enabled = False
         self._accel_enabled = False
         self._stick = SenseStick()
+
+        # initialise the TCS34725 colour sensor (if possible)
+        try:
+            self._colour = ColourSensor()
+        except Exception as e:
+            logging.warning(e)
+            pass
 
     ####
     # Text assets
@@ -192,6 +201,29 @@ class SenseHat(object):
         return self._stick
 
     ####
+    # Colour sensor
+    ####
+
+    @property
+    def colour(self):
+        try:
+            return self._colour
+        except AttributeError as e:
+            raise ColourSensorInitialisationError(
+                explanation="This Sense HAT" +
+                            " does not have a color sensor") from e
+
+    color = colour
+
+    def has_colour_sensor(self):
+        try:
+            self._colour
+        except:
+            return False
+        else:
+            return True
+
+    ####
     # LED Matrix
     ####
 
@@ -272,7 +304,7 @@ class SenseHat(object):
     def set_pixels(self, pixel_list):
         """
         Accepts a list containing 64 smaller lists of [R,G,B] pixels and
-        updates the LED matrix. R,G,B elements must intergers between 0
+        updates the LED matrix. R,G,B elements must integers between 0
         and 255
         """
 
@@ -504,7 +536,7 @@ class SenseHat(object):
 
     @gamma.setter
     def gamma(self, buffer):
-        if len(buffer) is not 32:
+        if len(buffer) != 32:
             raise ValueError('Gamma array must be of length 32')
 
         if not all(b <= 31 for b in buffer):

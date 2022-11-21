@@ -1,3 +1,21 @@
+python-sense-hat (2.4.0-1) bullseye; urgency=medium
+
+  * v2.4.0 release
+
+ -- Serge Schneider <serge@raspberrypi.com>  Wed, 10 Aug 2022 13:36:48 +0100
+
+python-sense-hat (2.3.1-1) bullseye; urgency=medium
+
+  * v2.3.1 release
+
+ -- Serge Schneider <serge@raspberrypi.com>  Fri, 17 Jun 2022 11:28:36 +0100
+
+python-sense-hat (2.2.0-2) bullseye; urgency=medium
+
+  * Bullseye update
+
+ -- Serge Schneider <serge@raspberrypi.com>  Mon, 19 Apr 2021 18:06:57 +0100
+
 python-sense-hat (2.2.0-1) jessie; urgency=medium
 
   * v2.2.0 release
