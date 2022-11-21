@@ -97,7 +97,7 @@ class SenseHat(object):
         try:
             self._colour = ColourSensor()
         except Exception as e:
-            logging.warning(e)
+            logging.debug(e)
             pass
 
     ####
