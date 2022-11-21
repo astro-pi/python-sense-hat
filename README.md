@@ -48,7 +48,7 @@ Import the sense_hat module and instantiate a SenseHat object::
 Documentation
 =============
 
-Comprehensive documentation is available at `pythonhosted.org/sense-hat`_
+Comprehensive documentation is available at `https://sense-hat.readthedocs.io/en/latest/`.
 
 Contributors
 ============
@@ -72,7 +72,7 @@ URLs
 
 * Raspberry Pi: https://www.raspberrypi.org/
 * Astro Pi: http://www.astro-pi.org/
-* pythonhosted.org/sense-hat: http://pythonhosted.org/sense-hat/
+* sense-hat.readthedocs.io: https://sense-hat.readthedocs.io/en/latest/
 * Dave Honess: https://github.com/davidhoness
 * Ben Nuttall: https://github.com/bennuttall
 * Serge Schneider: https://github.com/XECDesign
