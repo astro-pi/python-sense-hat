@@ -1,6 +1,10 @@
 """
-Python library for the TCS34725 Color Sensor
+Python library for the TCS3472x and TCS340x Color Sensors
 Documentation (including datasheet): https://ams.com/tcs34725#tab/documents
+                                     https://ams.com/tcs3400#tab/documents
+The sense hat for AstroPi on the ISS uses the TCS34725.
+The sense hat v2 uses the TCS3400 the successor of the TCS34725.
+The TCS34725 is not available any more. It was discontinued by ams in 2021.
 """
 
 from time import sleep
@@ -11,17 +15,14 @@ from .exceptions import ColourSensorInitialisationError, InvalidGainError, \
 class HardwareInterface:
     """
     `HardwareInterface` is the abstract class that sits between the
-    `ColourSensor` class (providing the TCS34725 sensor API) and the
-    actual hardware. Using this intermediate layer of abstraction, a
-    `ColourSensor` object interacts with the hardware without being
+    `ColourSensor` class (providing the TCS34725/TCS3400 sensor API)
+    and the actual hardware. Using this intermediate layer of abstraction,
+    a `ColourSensor` object interacts with the hardware without being
     aware of how this interaction is implemented.
     Different subclasses of the `HardwareInterface` class can provide
     access to the hardware through e.g. I2C, `libiio` and its system
     files or even a hardware emulator.
     """
-
-    GAIN_VALUES = (1, 4, 16, 60)
-    CLOCK_STEP = 0.0024 # the clock step is 2.4ms
 
     @staticmethod
     def max_value(integration_cycles):
@@ -29,7 +30,7 @@ class HardwareInterface:
         The maximum raw value for the RBGC channels depends on the number
         of integration cycles.
         """
-        return 2**16 if integration_cycles >= 64 else 1024*integration_cycles
+        return 65535 if integration_cycles >= 64 else 1024*integration_cycles
 
     def get_enabled(self):
         """
@@ -123,36 +124,34 @@ def _raw_wrapper(register):
     fashion. This is a factory function that implements this retrieval method.
     """
     def get_raw_register(self):
-        return self._read(register)
+        block = self.bus.read_i2c_block_data(self.ADDR, register, 2)
+        return (block[0] + (block[1] << 8))
     return get_raw_register
 
 class I2C(HardwareInterface):
     """
-    An implementation of the `HardwareInterface` for the TCS34725 sensor
-    that uses I2C to control the sensor and retrieve measurements.
-    Use the datasheet as a reference: https://ams.com/tcs34725#tab/documents
+    An implementation of the `HardwareInterface` for the TCS34725/TCS3400
+    sensor that uses I2C to control the sensor and retrieve measurements.
+    Use the datasheets as a reference.
     """
 
     # device-specific constants
     BUS = 1
-    ADDR = 0x29
-
-    COMMAND_BIT = 0x80
 
     # control registers 
-    ENABLE = 0x00 | COMMAND_BIT
-    ATIME = 0x01 | COMMAND_BIT
-    CONTROL = 0x0F | COMMAND_BIT
-    ID = 0x12 | COMMAND_BIT
-    STATUS = 0x13 | COMMAND_BIT
+    ENABLE = 0x80
+    ATIME = 0x81
+    CONTROL = 0x8F
+    ID = 0x92
+    STATUS = 0x93
     # (if a register is described in the datasheet but missing here
     # it means the corresponding functionality is not provided)
 
     # data registers
-    CDATA = 0x14 | COMMAND_BIT
-    RDATA = 0x16 | COMMAND_BIT
-    GDATA = 0x18 | COMMAND_BIT
-    BDATA = 0x1A | COMMAND_BIT
+    CDATA = 0x94
+    RDATA = 0x96
+    GDATA = 0x98
+    BDATA = 0x9A
 
     # bit positions
     OFF = 0x00
@@ -162,9 +161,13 @@ class I2C(HardwareInterface):
     AVALID = 0x01
 
     GAIN_REG_VALUES = (0x00, 0x01, 0x02, 0x03)
-    # map gain values to register values and vice-versa
-    GAIN_TO_REG = dict(zip(HardwareInterface.GAIN_VALUES, GAIN_REG_VALUES))
-    REG_TO_GAIN = dict(zip(GAIN_REG_VALUES, HardwareInterface.GAIN_VALUES))
+    # Assume TCS34725 as on the ISS AstroPi
+    # Adjust for TCS3400 after the detection of the sensor type.
+    ADDR = 0x29
+    GAIN_VALUES = (1, 4, 16, 60)
+    CLOCK_STEP = 0.0024 # 2.4ms
+    GAIN_TO_REG = dict(zip(GAIN_VALUES, GAIN_REG_VALUES))
+    REG_TO_GAIN = dict(zip(GAIN_REG_VALUES, GAIN_VALUES))
 
     def __init__(self):
 
@@ -176,14 +179,43 @@ class I2C(HardwareInterface):
         except Exception as e:
             explanation = "(I2C is not enabled)" if not self.i2c_enabled() else ""
             raise ColourSensorInitialisationError(explanation=explanation) from e
+
+        # Test for sensor at I2C addresses 0x29 or 0x39
+        # Both sensors have variants at 0x29 and 0x39 (See data sheets)
+        addr1 = addr2 = False
         try:
+            self.bus.write_quick(0x29)
+            addr1 = True
+        except:
+            pass
+        try:
+            self.bus.write_quick(0x39)
+            addr2 = True
+        except:
+            pass
+
+        if addr2:
+            self.ADDR = 0x39
+        if addr1 or addr2:
+            # get sensor id
             id = self._read(self.ID)
-        except Exception as e:
-            explanation = "(sensor not present)"
-            raise ColourSensorInitialisationError(explanation=explanation) from e
-        if id != 0x44:
-            explanation = f" (different device id detected: {id})"
-            raise ColourSensorInitialisationError(explanation=explanation) from e
+            if (id & 0xf8) == 0x90:
+                sensor = 'TCS340x'
+            elif (id & 0xf4) == 0x44:
+                sensor = 'TCS3472x'
+        else:
+            explanation = "(Sensor not present)"
+            raise ColourSensorInitialisationError(explanation=explanation)
+
+        # Set type specific constants
+        # Assume TCS3472x as in AstroPi
+        sensor == 'TCS3472x'
+        if sensor == 'TCS340x':
+            self.GAIN_VALUES = (1, 4, 16, 64)
+            self.CLOCK_STEP = 0.00275 # 2.75ms
+            self.GAIN_TO_REG = dict(zip(self.GAIN_VALUES, self.GAIN_REG_VALUES))
+            self.REG_TO_GAIN = dict(zip(self.GAIN_REG_VALUES, self.GAIN_VALUES))
+
     @staticmethod
     def i2c_enabled():
         """Returns True if I2C is enabled or False otherwise."""
@@ -192,14 +224,14 @@ class I2C(HardwareInterface):
     def _read(self, attribute):
         """
         Read and return the value of a specific register (`attribute`) of the
-        TCS34725 colour sensor.
+        TCS34725/TCS3400 colour sensor.
         """
         return self.bus.read_byte_data(self.ADDR, attribute)
     
     def _write(self, attribute, value):
         """
         Write a value in a specific register (`attribute`) of the
-        TCS34725 colour sensor.
+        TCS34725/TCS3400 colour sensor.
         """
         self.bus.write_byte_data(self.ADDR, attribute, value)
 
