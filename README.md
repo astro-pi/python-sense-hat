@@ -48,7 +48,7 @@ Import the sense_hat module and instantiate a SenseHat object::
 Documentation
 =============
 
-Comprehensive documentation is available at `pythonhosted.org/sense-hat`_
+Comprehensive documentation is available at `https://sense-hat.readthedocs.io/en/latest/`.
 
 Contributors
 ============
@@ -72,7 +72,7 @@ URLs
 
 * Raspberry Pi: https://www.raspberrypi.org/
 * Astro Pi: http://www.astro-pi.org/
-* pythonhosted.org/sense-hat: http://pythonhosted.org/sense-hat/
+* sense-hat.readthedocs.io: https://sense-hat.readthedocs.io/en/latest/
 * Dave Honess: https://github.com/davidhoness
 * Ben Nuttall: https://github.com/bennuttall
 * Serge Schneider: https://github.com/XECDesign
@@ -80,8 +80,8 @@ URLs
 * Tyler Laws: https://github.com/tyler-laws
 * George Boukeas: https://github.com/boukeas
 * BSD Licence: http://opensource.org/licenses/BSD-3-Clause
-* GitHub: https://github.com/RPi-Distro/python-sense-hat
-* GitHub Issues: https://github.com/RPi-Distro/python-sense-hat/issues
+* GitHub: https://github.com/astro-pi/python-sense-hat
+* GitHub Issues: https://github.com/astro-pi/python-sense-hat/issues
 * `The Pi Hut`: http://thepihut.com/products/raspberry-pi-sense-hat-astro-pi
 * `Pimoroni`: https://shop.pimoroni.com/products/raspberry-pi-sense-hat
 * `Amazon (UK)`: http://www.amazon.co.uk/Raspberry-Pi-2483095-Sense-HAT/dp/B014T2IHQ8/
