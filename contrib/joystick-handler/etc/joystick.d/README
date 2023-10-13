@@ -1,0 +1,9 @@
+Event handlers for Sense Hat joystick clicks.
+
+Each subdir {press,hold,release}/{up,down,left,right,push}/ contains
+executable scripts that will be run by run-parts (8) when the joystick
+is pressed/released in the given position.
+
+Each script will receive 2 arguments: STATE, KEY.
+STATE is one of: press, hold, release.
+KEY is one of: up, down, left, right, push.
