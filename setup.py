@@ -27,7 +27,7 @@ setup(
     },
     include_package_data=True,
     install_requires=[
-        "pillow",
+        "pillow>=8.1.2",
         "numpy"
     ],
     classifiers=[
