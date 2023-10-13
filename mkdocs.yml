@@ -1,10 +1,10 @@
 site_name: Sense HAT
 theme: readthedocs
-site_url: https://pythonhosted.org/sense-hat/
-repo_url: https://github.com/RPi-Distro/python-sense-hat
+site_url: https://sense-hat.readthedocs.io/en/latest/
+repo_url: https://github.com/astro-pi/python-sense-hat
 site_description: Python module to control the Raspberry Pi Sense HAT used in the Astro Pi mission
-site_author: David Honess
-site_dir: pythonhosted
+site_author: Raspberry Pi Foundation
+site_dir: readthedocs
 #google_analytics: ['UA-46270871-5', 'pythonhosted.org/sense-hat']
 nav:
 - 'Home': 'index.md'

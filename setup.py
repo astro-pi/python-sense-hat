@@ -7,7 +7,7 @@ def read(fname):
 
 setup(
     name="sense-hat",
-    version="2.4.0",
+    version="2.6.0",
     author="Dave Honess",
     author_email="dave@raspberrypi.org",
     description="Python module to control the Raspberry Pi Sense HAT, originally used in the Astro Pi mission",

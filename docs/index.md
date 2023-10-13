@@ -1,6 +1,6 @@
 # Sense HAT
 
-Python module to control the [Raspberry Pi Sense HAT](https://www.raspberrypi.org/products/sense-hat/)
+Python module to control the [Raspberry Pi Sense HAT](https://www.raspberrypi.com/products/sense-hat/)
 
 ## Features
 

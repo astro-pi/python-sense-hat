@@ -11,7 +11,7 @@ class SenseHatException(Exception):
 
 
 class ColourSensorInitialisationError(SenseHatException):
-    fmt = "Failed to initialise TCS34725 colour sensor. {explanation}"
+    fmt = "Failed to initialise colour sensor. {explanation}"
 
 
 class InvalidGainError(SenseHatException):
