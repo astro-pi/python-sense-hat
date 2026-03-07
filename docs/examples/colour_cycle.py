@@ -1,17 +1,8 @@
-#!/usr/bin/python
-import signal
-import sys
+#!/usr/bin/env python
 import time
 from sense_hat import SenseHat
 
-sense = SenseHat()
-
-def clear(signum, frame):
-    sense.clear()
-    sys.exit(0)
-
-signal.signal(signal.SIGINT, clear)
-signal.signal(signal.SIGTERM, clear)
+sense = SenseHat(clear_on_exit=True)
 
 r = 255
 g = 0

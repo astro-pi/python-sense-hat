@@ -1,6 +1,4 @@
-#!/usr/bin/python
-import signal
-import sys
+#!/usr/bin/env python
 from sense_hat import SenseHat
 
 # To get good results with the magnetometer you must first calibrate it using
@@ -10,15 +8,7 @@ from sense_hat import SenseHat
 
 led_loop = [4, 5, 6, 7, 15, 23, 31, 39, 47, 55, 63, 62, 61, 60, 59, 58, 57, 56, 48, 40, 32, 24, 16, 8, 0, 1, 2, 3]
 
-sense = SenseHat()
-
-def clear(signum, frame):
-    sense.clear()
-    sys.exit(0)
-
-signal.signal(signal.SIGINT, clear)
-signal.signal(signal.SIGTERM, clear)
-
+sense = SenseHat(clear_on_exit=True)
 sense.set_rotation(0)
 sense.clear()
 

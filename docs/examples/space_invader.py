@@ -1,6 +1,5 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 import os
-
 from sense_hat import SenseHat
 
 sense = SenseHat()

@@ -1,6 +1,4 @@
-#!/usr/bin/python
-import signal
-import sys
+#!/usr/bin/env python
 import time
 from sense_hat import SenseHat
 
@@ -18,14 +16,7 @@ question_mark = [
     O, O, O, X, O, O, O, O
 ]
 
-sense = SenseHat()
-
-def clear(signum, frame):
-    sense.clear()
-    sys.exit(0)
-
-signal.signal(signal.SIGINT, clear)
-signal.signal(signal.SIGTERM, clear)
+sense = SenseHat(clear_on_exit=True)
 
 sense.set_pixels(question_mark)
 
