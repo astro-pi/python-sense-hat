@@ -306,11 +306,11 @@ class SenseHat(object):
         and 255
         """
 
-        if len(pixel_list) != 64:
+        if not hasattr(pixel_list, '__len__') or len(pixel_list) != 64:
             raise ValueError('Pixel lists must have 64 elements')
 
         for index, pix in enumerate(pixel_list):
-            if len(pix) != 3:
+            if not hasattr(pix, '__len__') or len(pix) != 3:
                 raise ValueError('Pixel at index %d is invalid. Pixels must contain 3 elements: Red, Green and Blue' % index)
 
             for element in pix:
@@ -351,16 +351,15 @@ class SenseHat(object):
         ap.set_pixel(x, y, pixel)
         """
 
-        pixel_error = 'Pixel arguments must be given as (r, g, b) or r, g, b'
-
         if len(args) == 1:
             pixel = args[0]
-            if len(pixel) != 3:
-                raise ValueError(pixel_error)
         elif len(args) == 3:
             pixel = args
         else:
-            raise ValueError(pixel_error)
+            pixel = None
+
+        if not hasattr(pixel, '__len__') or len(pixel) != 3:
+            raise ValueError('Pixel arguments must be given as (r, g, b) or r, g, b')
 
         if x > 7 or x < 0:
             raise ValueError('X position must be between 0 and 7')
