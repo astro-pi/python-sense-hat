@@ -1,3 +1,9 @@
+python-sense-hat (2.6.1-1) bookworm; urgency=medium
+
+  * v2.6.1 release
+
+ -- Geraint Ballinger <geraint.ballinger@raspberrypi.org>  Mon, 02 Mar 2026 11:09:00 +0000
+
 python-sense-hat (2.6.0-1) bookworm; urgency=medium
 
   * v2.6.0 release
