@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 import logging
 import struct
 import os
@@ -12,6 +12,8 @@ import RTIMU  # custom version
 import pwd
 import array
 import fcntl
+import atexit
+import signal
 from PIL import Image  # pillow
 from copy import deepcopy
 
@@ -33,7 +35,8 @@ class SenseHat(object):
     def __init__(
             self,
             imu_settings_file='RTIMULib',
-            text_assets='sense_hat_text'
+            text_assets='sense_hat_text',
+            clear_on_exit=False
         ):
 
         self._fb_device = self._get_fb_device()
@@ -92,6 +95,17 @@ class SenseHat(object):
         self._gyro_enabled = False
         self._accel_enabled = False
         self._stick = SenseStick()
+        
+        if clear_on_exit:
+            atexit.register(self.clear)
+            for s in (signal.SIGTERM, signal.SIGINT, signal.SIGQUIT, signal.SIGHUP):
+                old_handler = signal.getsignal(s)
+                def handler(signum, frame):
+                    self.clear()
+                    if callable(old_handler):
+                        old_handler(signum, frame)
+                    sys.exit(0)
+                signal.signal(s, handler)
 
         # initialise the TCS34725 colour sensor (if possible)
         try:

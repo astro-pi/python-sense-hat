@@ -1,5 +1,4 @@
-#!/usr/bin/python
-import sys
+#!/usr/bin/env python
 import time
 from sense_hat import SenseHat
 
@@ -17,7 +16,7 @@ question_mark = [
     O, O, O, X, O, O, O, O
 ]
 
-sense = SenseHat()
+sense = SenseHat(clear_on_exit=True)
 
 sense.set_pixels(question_mark)
 

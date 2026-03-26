@@ -1,8 +1,8 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 import time
 from sense_hat import SenseHat
 
-sense = SenseHat()
+sense = SenseHat(clear_on_exit=True)
 
 r = 255
 g = 0
