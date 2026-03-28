@@ -316,6 +316,10 @@ class I2C(HardwareInterface):
     get_clear = _raw_wrapper(CDATA)
 
 
+def ceildiv(a, b):
+    return -(a // -b)
+
+
 class ColourSensor:
     
     def __init__(self, gain=1, integration_cycles=1, interface=I2C):
@@ -376,7 +380,7 @@ class ColourSensor:
 
     @property
     def _scaling(self):
-        return self.max_raw // 256
+        return ceildiv(self.max_raw, 256)
     
     @property
     def colour(self):
