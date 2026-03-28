@@ -1,0 +1,9 @@
+#!/usr/bin/python
+
+from sense_hat import SenseHat
+import sys
+
+if __name__ == '__main__':
+    (_state, _key) = sys.argv[1:]  # ignored
+    sense = SenseHat()
+    sense.show_message("Hello, World!")
