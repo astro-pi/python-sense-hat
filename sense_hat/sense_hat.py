@@ -12,6 +12,7 @@ import RTIMU  # custom version
 import pwd
 import array
 import fcntl
+import threading
 from PIL import Image  # pillow
 from copy import deepcopy
 
@@ -20,7 +21,10 @@ from .colour import ColourSensor
 from .exceptions import ColourSensorInitialisationError
 
 class SenseHat(object):
-
+    # singleton registration variables
+    _instance = None
+    _lock = threading.Lock()
+    
     SENSE_HAT_FB_NAME = 'RPi-Sense FB'
     SENSE_HAT_FB_FBIOGET_GAMMA = 61696
     SENSE_HAT_FB_FBIOSET_GAMMA = 61697
@@ -30,6 +34,14 @@ class SenseHat(object):
     SENSE_HAT_FB_GAMMA_USER = 2
     SETTINGS_HOME_PATH = '.config/sense_hat'
 
+    # Ensure that there is only a single SenseHat object running to prevent sensor read issues
+    def __new__(cls):
+        if cls._instance is None:
+            with cls._lock:
+                if not cls._instance:
+                    cls._instance = super().__new__(cls)
+        return cls._instance
+    
     def __init__(
             self,
             imu_settings_file='RTIMULib',
