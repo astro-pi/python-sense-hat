@@ -197,6 +197,15 @@ class SenseStick(object):
             if event:
                 return event
 
+    def clear_events(self):
+        """
+        Clear all outstanding events
+        """
+
+        while( self._read() != None):
+            pass
+
+
     def get_events(self):
         """
         Returns a list of all joystick events that have occurred since the last
