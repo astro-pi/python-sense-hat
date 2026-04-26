@@ -189,6 +189,9 @@ class SenseStick(object):
         events will be thrown away first. This is most useful if you are only
         interested in "pressed" events.
         """
+        if self._callbacks:
+            raise RuntimeError('Cannot use wait_for_event when callbacks are assigned')
+        
         if emptybuffer:
             while self._wait(0):
                 self._read()

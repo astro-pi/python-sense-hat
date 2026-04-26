@@ -672,7 +672,10 @@ or the type of a parameter.
 ### wait_for_event
 
 Blocks execution until a joystick event occurs, then returns an `InputEvent`
-representing the event that occurred.
+representing the event that occurred. 
+
+wait_for_event should not be used at the same time as direction_up, direction_left,
+direction_right, direction_down, direction_middle or direction_any functions.
 
 ```python
 from sense_hat import SenseHat
@@ -709,6 +712,9 @@ print("The joystick was {} {}".format(event.action, event.direction))
 Returns a list of `InputEvent` tuples representing all events that have
 occurred since the last call to `get_events` or `wait_for_event`.
 
+get_events should not be used at the same time as direction_up, direction_left,
+direction_right, direction_down, direction_middle or direction_any functions.
+
 ```python
 from sense_hat import SenseHat
 
@@ -725,6 +731,8 @@ These attributes can be assigned a function which will be called whenever the
 joystick is pushed in the associated direction (or in any direction in the case
 of `direction_any`). The function assigned must either take no parameters or
 must take a single parameter which will be passed the associated `InputEvent`.
+
+These functions should not be used at the same time as wait_for_event or get_events.
 
 ```python
 from sense_hat import SenseHat, ACTION_PRESSED, ACTION_HELD, ACTION_RELEASED
